@@ -31,7 +31,7 @@ export const cpRatings = [
     {
         platform: "CODECHEF",
         rating: "1651",
-        rank: "4★",
+        rank: "3 stars",
         url: "https://www.codechef.com/users/harsh_boghara",
         className: "cp-codechef",
     },
