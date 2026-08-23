@@ -1,0 +1,698 @@
+/* =========================
+   PROJECTS
+========================= */
+
+.projects {
+    position: relative;
+}
+
+/* =========================
+   PROJECT TIMELINE
+========================= */
+
+.project-timeline {
+    position: relative;
+
+    margin-top: 65px;
+
+    padding: 0 30px;
+}
+
+.project-timeline-points {
+    position: relative;
+    z-index: 5;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    width: 100%;
+
+    overflow: visible;
+
+    scrollbar-width: none;
+}
+
+.project-timeline-points::-webkit-scrollbar {
+    display: none;
+}
+
+/* =========================
+   TIMELINE RAIL
+========================= */
+
+.project-track {
+    position: absolute;
+
+    left: calc(30px + (100% - 60px) / (var(--project-count) * 2));
+
+    right: calc(30px + (100% - 60px) / (var(--project-count) * 2));
+
+    top: 7px;
+
+    height: 2px;
+
+    z-index: 1;
+
+    background: #252525;
+
+    pointer-events: none;
+}
+
+.project-track-active {
+    display: none;
+}
+
+/* =========================
+   TIMELINE POINT
+========================= */
+
+.project-point {
+    position: relative;
+    z-index: 5;
+
+    flex: 1 0 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    min-width: 180px;
+
+    padding: 0;
+
+    border: 0;
+
+    background: transparent;
+
+    color: inherit;
+
+    cursor: pointer;
+
+    text-align: center;
+}
+
+.project-dot {
+    position: relative;
+    z-index: 10;
+
+    display: block;
+
+    width: 16px;
+    height: 16px;
+
+    flex: 0 0 16px;
+
+    border: 1px solid #555;
+
+    border-radius: 50%;
+
+    background: var(--bg);
+
+    box-sizing: border-box;
+
+    transition: transform 0.3s ease, border-color 0.3s ease,
+        background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.project-point.active .project-dot {
+    border-color: var(--accent);
+
+    background: var(--accent);
+
+    animation: projectPulse 2s ease-in-out infinite;
+}
+
+@keyframes projectPulse {
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(184, 255, 90, 0);
+    }
+
+    50% {
+        box-shadow: 0 0 0 6px rgba(184, 255, 90, 0.08);
+    }
+}
+
+.project-point:hover .project-dot {
+    transform: scale(1.2);
+
+    border-color: var(--accent);
+}
+
+/* Point text */
+
+.project-point-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 4px;
+
+    margin-top: 12px;
+}
+
+.project-point-short {
+    color: var(--muted);
+
+    font-family: monospace;
+    font-size: 12px;
+    font-weight: 500;
+
+    letter-spacing: 0.03em;
+
+    transition: color 0.25s ease;
+}
+
+.project-point-date {
+    color: var(--dim);
+
+    font-family: monospace;
+    font-size: 10px;
+
+    transition: color 0.25s ease;
+}
+
+.project-point.active .project-point-short {
+    color: var(--text);
+}
+
+.project-point.active .project-point-date {
+    color: var(--accent);
+}
+
+/* =========================
+   ACTIVE PROJECT
+========================= */
+
+.project-view {
+    margin-top: 45px;
+
+    touch-action: pan-y;
+
+    user-select: none;
+
+    cursor: grab;
+}
+
+.project-view:active {
+    cursor: grabbing;
+}
+
+.project-card {
+    position: relative;
+
+    overflow: hidden;
+
+    border: 1px solid var(--border);
+
+    background: var(--surface);
+}
+
+/* =========================
+   SWIPE ANIMATION
+========================= */
+
+.project-swipe-left {
+    animation: projectSwipeLeft 0.32s ease both;
+}
+
+.project-swipe-right {
+    animation: projectSwipeRight 0.32s ease both;
+}
+
+@keyframes projectSwipeLeft {
+    0% {
+        opacity: 0.45;
+
+        transform: translateX(28px);
+    }
+
+    100% {
+        opacity: 1;
+
+        transform: translateX(0);
+    }
+}
+
+@keyframes projectSwipeRight {
+    0% {
+        opacity: 0.45;
+
+        transform: translateX(-28px);
+    }
+
+    100% {
+        opacity: 1;
+
+        transform: translateX(0);
+    }
+}
+
+/* =========================
+   CARD TOP ACCENT
+========================= */
+
+.project-card::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 0;
+    height: 1px;
+
+    background: var(--accent);
+
+    z-index: 10;
+
+    transition: width 0.4s ease;
+}
+
+.project-card:hover::before {
+    width: 100%;
+}
+
+/* =========================
+   CARD HEADER
+========================= */
+
+.project-card-head {
+    display: flex;
+    justify-content: space-between;
+
+    gap: 40px;
+
+    padding: 25px 30px;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.project-card-title {
+    min-width: 0;
+}
+
+.project-type {
+    margin-bottom: 9px;
+
+    color: var(--accent);
+
+    font-family: monospace;
+    font-size: 10px;
+
+    letter-spacing: 0.1em;
+}
+
+.project-card h3 {
+    font-size: 36px;
+
+    line-height: 1;
+
+    letter-spacing: -0.05em;
+}
+
+/* =========================
+   LINKS
+========================= */
+
+.project-meta {
+    display: flex;
+    align-items: flex-start;
+
+    padding-top: 4px;
+}
+
+.project-links {
+    display: flex;
+    align-items: center;
+
+    gap: 18px;
+}
+
+.project-link {
+    display: inline-flex;
+    align-items: center;
+
+    color: var(--text);
+
+    font-family: monospace;
+    font-size: 10px;
+
+    letter-spacing: 0.04em;
+
+    text-decoration: none;
+
+    transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+.project-link:hover {
+    color: var(--accent);
+}
+
+.project-link-disabled {
+    color: var(--dim);
+
+    opacity: 0.65;
+
+    cursor: default;
+}
+
+/* =========================
+   CARD BODY
+========================= */
+
+.project-card-body {
+    padding: 22px 30px 25px;
+}
+
+/* Description */
+
+.project-description {
+    max-width: 850px;
+
+    margin-bottom: 22px;
+
+    color: var(--text);
+
+    font-size: 16px;
+
+    line-height: 1.6;
+}
+
+/* =========================
+   SECTION LABEL
+========================= */
+
+.project-section {
+    margin-top: 20px;
+}
+
+.project-section-label {
+    margin-bottom: 10px;
+
+    color: var(--accent);
+
+    font-family: monospace;
+    font-size: 9px;
+
+    letter-spacing: 0.12em;
+}
+
+/* =========================
+   TECH
+========================= */
+
+.project-tech {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 6px;
+}
+
+.project-tech span {
+    padding: 6px 9px;
+
+    border: 1px solid #303030;
+
+    border-radius: 2px;
+
+    color: var(--text);
+
+    font-family: monospace;
+    font-size: 10px;
+
+    transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.project-tech span:hover {
+    color: var(--accent);
+
+    border-color: #454545;
+
+    background: #151515;
+}
+
+/* =========================
+   COMPACT HIGHLIGHTS
+========================= */
+
+.project-highlights {
+    display: grid;
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    margin-top: 22px;
+
+    border-top: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+}
+
+.project-highlight {
+    min-height: 0;
+
+    display: flex;
+    align-items: baseline;
+
+    gap: 18px;
+
+    padding: 13px 16px;
+
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+}
+
+.project-highlight p {
+    flex: 0 0 95px;
+
+    margin: 0;
+
+    color: var(--dim);
+
+    font-family: monospace;
+    font-size: 8px;
+
+    letter-spacing: 0.09em;
+}
+
+.project-highlight span {
+    color: var(--text);
+
+    font-size: 13px;
+
+    line-height: 1.4;
+}
+
+/* =========================
+   WHAT I BUILT
+========================= */
+
+.project-work {
+    margin-top: 22px;
+}
+
+.project-points {
+    display: flex;
+    flex-direction: column;
+
+    border-top: 1px solid var(--border);
+}
+
+.project-points > div {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 11px;
+
+    padding: 9px 0;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.project-points > div > span {
+    flex: 0 0 auto;
+
+    width: 5px;
+    height: 5px;
+
+    margin-top: 7px;
+
+    border-radius: 50%;
+
+    background: var(--accent);
+}
+
+.project-points p {
+    color: var(--muted);
+
+    font-size: 13px;
+
+    line-height: 1.5;
+}
+
+/* =========================
+   NAVIGATION
+========================= */
+
+.project-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 18px;
+
+    margin-top: 18px;
+}
+
+.project-nav button {
+    width: 32px;
+    height: 32px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid var(--border);
+
+    background: transparent;
+
+    color: var(--muted);
+
+    cursor: pointer;
+
+    transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.project-nav button:hover {
+    color: var(--accent);
+
+    border-color: #444;
+
+    background: var(--surface);
+}
+
+.project-nav > span {
+    color: var(--dim);
+
+    font-family: monospace;
+    font-size: 10px;
+}
+
+.project-nav > span i {
+    margin: 0 5px;
+
+    color: #333;
+
+    font-style: normal;
+}
+
+.project-nav button:disabled {
+    color: #333;
+
+    border-color: #222;
+
+    background: transparent;
+
+    opacity: 0.5;
+
+    cursor: not-allowed;
+}
+
+.project-nav button:disabled:hover {
+    color: #333;
+
+    border-color: #222;
+
+    background: transparent;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 700px) {
+    .project-timeline {
+        margin-top: 50px;
+
+        padding: 0;
+
+        overflow: hidden;
+    }
+
+    .project-timeline-points {
+        justify-content: flex-start;
+
+        overflow-x: auto;
+        overflow-y: visible;
+
+        padding: 0 0 5px;
+    }
+
+    .project-point {
+        flex: 0 0 150px;
+
+        min-width: 150px;
+    }
+
+    .project-track {
+        left: 75px;
+        right: auto;
+
+        width: calc(150px * (var(--project-count) - 1));
+    }
+
+    .project-view {
+        margin-top: 40px;
+    }
+
+    .project-card-head {
+        flex-direction: column;
+
+        gap: 18px;
+
+        padding: 22px;
+    }
+
+    .project-card h3 {
+        font-size: 28px;
+    }
+
+    .project-meta {
+        align-items: flex-start;
+
+        padding-top: 0;
+    }
+
+    .project-links {
+        justify-content: flex-start;
+
+        flex-wrap: wrap;
+    }
+
+    .project-card-body {
+        padding: 20px 22px 24px;
+    }
+
+    .project-description {
+        font-size: 15px;
+    }
+
+    .project-highlights {
+        grid-template-columns: 1fr;
+    }
+
+    .project-highlight {
+        gap: 12px;
+
+        padding: 11px 13px;
+    }
+
+    .project-highlight p {
+        flex-basis: 85px;
+    }
+
+    .project-points p {
+        font-size: 13px;
+    }
+}

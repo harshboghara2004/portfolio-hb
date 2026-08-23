@@ -1,0 +1,548 @@
+/* =========================
+   EXPERIENCE
+========================= */
+
+.experience {
+    position: relative;
+}
+
+/* =========================
+   TIMELINE
+========================= */
+
+.exp-timeline {
+    position: relative;
+
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+
+    margin-top: 65px;
+    padding: 0 70px;
+}
+
+.exp-track {
+    position: absolute;
+
+    left: calc(70px + (100% - 140px) / 4);
+    right: calc(70px + (100% - 140px) / 4);
+
+    top: 7px;
+
+    height: 1px;
+
+    background: var(--border);
+}
+
+.exp-point {
+    position: relative;
+    z-index: 2;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 14px;
+
+    padding: 0;
+
+    border: 0;
+
+    background: transparent;
+
+    color: inherit;
+
+    cursor: pointer;
+
+    text-align: center;
+}
+
+.exp-dot {
+    width: 14px;
+    height: 14px;
+
+    border: 1px solid var(--dim);
+    border-radius: 50%;
+
+    background: var(--bg);
+
+    transition: transform 0.3s ease, border-color 0.3s ease,
+        background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.exp-point.active .exp-dot {
+    border-color: var(--accent);
+
+    background: var(--accent);
+
+    animation: expPulse 2s ease-in-out infinite;
+}
+
+@keyframes expPulse {
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(184, 255, 90, 0);
+    }
+
+    50% {
+        box-shadow: 0 0 0 6px rgba(184, 255, 90, 0.08);
+    }
+}
+
+.exp-point:hover .exp-dot {
+    border-color: var(--accent);
+
+    transform: scale(1.25);
+}
+
+.exp-point-info {
+    display: flex;
+    flex-direction: column;
+
+    gap: 5px;
+}
+
+.exp-point-date {
+    color: var(--dim);
+
+    font-family: monospace;
+    font-size: 10px;
+
+    transition: color 0.25s ease;
+}
+
+.exp-point-company {
+    color: var(--muted);
+
+    font-size: 13px;
+    font-weight: 500;
+
+    transition: color 0.25s ease;
+}
+
+.exp-point.active .exp-point-date {
+    color: var(--accent);
+}
+
+.exp-point.active .exp-point-company {
+    color: var(--text);
+}
+
+/* =========================
+   ACTIVE CARD
+========================= */
+
+.exp-view {
+    margin-top: 50px;
+
+    touch-action: pan-y;
+
+    user-select: none;
+
+    cursor: grab;
+}
+
+.exp-view:active {
+    cursor: grabbing;
+}
+
+.exp-card {
+    position: relative;
+
+    overflow: hidden;
+
+    border: 1px solid var(--border);
+
+    background: var(--surface);
+}
+
+/* =========================
+   SWIPE ANIMATION
+========================= */
+
+.exp-swipe-left {
+    animation: expSwipeLeft 0.32s ease both;
+}
+
+.exp-swipe-right {
+    animation: expSwipeRight 0.32s ease both;
+}
+
+@keyframes expSwipeLeft {
+    0% {
+        opacity: 0.45;
+        transform: translateX(28px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes expSwipeRight {
+    0% {
+        opacity: 0.45;
+        transform: translateX(-28px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* =========================
+   TOP ACCENT LINE
+========================= */
+
+.exp-card::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 0;
+    height: 1px;
+
+    z-index: 10;
+
+    background: var(--accent);
+
+    transition: width 0.4s ease;
+}
+
+.exp-card:hover::before {
+    width: 100%;
+}
+
+/* =========================
+   CARD HEADER
+========================= */
+
+.exp-card-head {
+    display: flex;
+    justify-content: space-between;
+
+    gap: 40px;
+
+    padding: 28px 32px;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.exp-type {
+    margin-bottom: 9px;
+
+    color: var(--accent);
+
+    font-family: monospace;
+    font-size: 10px;
+
+    letter-spacing: 0.1em;
+}
+
+.exp-card h3 {
+    font-size: 34px;
+
+    line-height: 1;
+
+    letter-spacing: -0.05em;
+}
+
+.exp-company {
+    margin-top: 9px;
+
+    color: var(--muted);
+
+    font-family: monospace;
+    font-size: 12px;
+}
+
+.exp-company a {
+    display: inline-block;
+
+    margin-left: 8px;
+
+    color: var(--dim);
+
+    font-size: 15px;
+
+    transition: color 0.2s ease;
+}
+
+.exp-company a:hover {
+    color: var(--accent);
+}
+
+/* Meta */
+
+.exp-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    gap: 10px;
+
+    padding-top: 5px;
+}
+
+.exp-location {
+    display: flex;
+    align-items: center;
+
+    gap: 7px;
+
+    color: var(--text);
+
+    font-family: monospace;
+    font-size: 11px;
+
+    white-space: nowrap;
+}
+
+.exp-location i {
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: var(--accent);
+}
+
+.exp-period {
+    color: var(--dim);
+
+    font-family: monospace;
+    font-size: 10px;
+}
+
+/* =========================
+   CARD BODY
+========================= */
+
+.exp-card-body {
+    padding: 22px 32px 28px;
+}
+
+.exp-tech {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 6px;
+
+    margin-bottom: 18px;
+}
+
+.exp-tech span {
+    padding: 7px 10px;
+
+    border: 1px solid #303030;
+    border-radius: 2px;
+
+    color: var(--text);
+
+    font-family: monospace;
+    font-size: 10px;
+
+    transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.exp-tech span:hover {
+    color: var(--accent);
+
+    border-color: #454545;
+}
+
+.exp-intro {
+    max-width: 780px;
+
+    margin-bottom: 20px;
+
+    color: var(--muted);
+
+    font-size: 15px;
+
+    line-height: 1.65;
+}
+
+/* Points */
+
+.exp-points {
+    display: flex;
+    flex-direction: column;
+
+    border-top: 1px solid var(--border);
+}
+
+.exp-points > div {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 12px;
+
+    padding: 11px 0;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.exp-bullet {
+    flex: 0 0 auto;
+
+    width: 5px;
+    height: 5px;
+
+    margin-top: 8px;
+
+    border-radius: 50%;
+
+    background: var(--dim);
+}
+
+.exp-points p {
+    color: var(--muted);
+
+    font-size: 14px;
+
+    line-height: 1.55;
+}
+
+/* =========================
+   NAVIGATION
+========================= */
+
+.exp-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 18px;
+
+    margin-top: 20px;
+}
+
+.exp-nav button {
+    width: 32px;
+    height: 32px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid var(--border);
+    border-radius: 2px;
+
+    background: transparent;
+
+    color: var(--muted);
+
+    cursor: pointer;
+
+    transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.exp-nav button:hover {
+    color: var(--accent);
+
+    border-color: #3a3a3a;
+
+    background: var(--surface);
+}
+
+.exp-nav > span {
+    color: var(--dim);
+
+    font-family: monospace;
+    font-size: 10px;
+}
+
+.exp-nav > span i {
+    margin: 0 5px;
+
+    color: #333;
+
+    font-style: normal;
+}
+
+.exp-nav button:disabled {
+    color: #333;
+
+    border-color: #222;
+
+    background: transparent;
+
+    cursor: not-allowed;
+
+    opacity: 0.5;
+}
+
+.exp-nav button:disabled:hover {
+    color: #333;
+
+    border-color: #222;
+
+    background: transparent;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 700px) {
+    .exp-timeline {
+        grid-template-columns: repeat(2, minmax(150px, 1fr));
+
+        margin-top: 50px;
+        padding: 0 25px;
+
+        overflow-x: auto;
+
+        scrollbar-width: none;
+    }
+
+    .exp-timeline::-webkit-scrollbar {
+        display: none;
+    }
+
+    .exp-track {
+        left: calc(70px + (100% - 140px) / 4);
+        right: calc(70px + (100% - 140px) / 4);
+    }
+
+    .exp-point {
+        min-width: 150px;
+    }
+
+    .exp-view {
+        margin-top: 40px;
+    }
+
+    .exp-card-head {
+        flex-direction: column;
+
+        gap: 20px;
+
+        padding: 22px;
+    }
+
+    .exp-card h3 {
+        font-size: 27px;
+    }
+
+    .exp-meta {
+        align-items: flex-start;
+    }
+
+    .exp-card-body {
+        padding: 20px 22px 24px;
+    }
+
+    .exp-intro {
+        font-size: 14px;
+    }
+
+    .exp-points p {
+        font-size: 13px;
+    }
+}
