@@ -16,8 +16,10 @@
 
     position: relative;
 
-    width: 100%;
-
+    width: calc(var(--exp-point-width) * 2);
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
     margin-top: 75px;
 
     padding: 18px 0 14px;
@@ -61,7 +63,7 @@
 
     width: max-content;
 
-    min-width: 100%;
+    min-width: 0;
 
     padding-left: var(--exp-side);
     padding-right: var(--exp-side);
