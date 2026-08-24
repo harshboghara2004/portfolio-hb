@@ -80,8 +80,8 @@ export default function Projects() {
     }, [active]);
 
     /* =========================
-       TIMELINE TOUCH
-    ========================= */
+   TIMELINE TOUCH
+========================= */
 
     const handleTimelineTouchStart = (event) => {
         if (!event.touches?.length) {
@@ -89,13 +89,60 @@ export default function Projects() {
         }
 
         timelineTouchStartX.current = event.touches[0].clientX;
-
         timelineTouchStartY.current = event.touches[0].clientY;
     };
 
-    const handleTimelineTouchEnd = () => {
+    const handleTimelineTouchEnd = (event) => {
+        if (
+            timelineTouchStartX.current === null ||
+            timelineTouchStartY.current === null ||
+            !event.changedTouches?.length
+        ) {
+            return;
+        }
+
+        const endX = event.changedTouches[0].clientX;
+        const endY = event.changedTouches[0].clientY;
+
+        const deltaX = endX - timelineTouchStartX.current;
+
+        const deltaY = endY - timelineTouchStartY.current;
+
+        const absX = Math.abs(deltaX);
+        const absY = Math.abs(deltaY);
+
         timelineTouchStartX.current = null;
         timelineTouchStartY.current = null;
+
+        /* Ignore vertical page scrolling */
+        if (absY >= absX) {
+            return;
+        }
+
+        /* Ignore small movements */
+        if (absX < 50) {
+            return;
+        }
+
+        /* =========================
+       SWIPE LEFT → NEXT
+    ========================= */
+
+        if (deltaX < 0) {
+            if (active < projects.length - 1) {
+                selectProject(active + 1, "next");
+            }
+
+            return;
+        }
+
+        /* =========================
+       SWIPE RIGHT → PREVIOUS
+    ========================= */
+
+        if (active > 0) {
+            selectProject(active - 1, "previous");
+        }
     };
 
     /* =========================
