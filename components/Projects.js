@@ -9,9 +9,19 @@ export default function Projects() {
 
     const timelineRef = useRef(null);
 
-    const touchStartX = useRef(null);
-    const touchStartY = useRef(null);
-    const swipeHandled = useRef(false);
+    /* =========================
+       TIMELINE SWIPE
+    ========================= */
+
+    const timelineTouchStartX = useRef(null);
+    const timelineTouchStartY = useRef(null);
+
+    /* =========================
+       CARD SWIPE
+    ========================= */
+
+    const cardTouchStartX = useRef(null);
+    const cardTouchStartY = useRef(null);
 
     const project = projects[active];
 
@@ -41,6 +51,7 @@ export default function Projects() {
         }
 
         const points = timeline.querySelectorAll(".project-point");
+
         const point = points[active];
 
         if (!point) {
@@ -48,9 +59,11 @@ export default function Projects() {
         }
 
         const timelineRect = timeline.getBoundingClientRect();
+
         const pointRect = point.getBoundingClientRect();
 
         const pointCenter = pointRect.left + pointRect.width / 2;
+
         const timelineCenter = timelineRect.left + timelineRect.width / 2;
 
         const target = timeline.scrollLeft + pointCenter - timelineCenter;
@@ -67,63 +80,105 @@ export default function Projects() {
     }, [active]);
 
     /* =========================
-       SWIPE
+       TIMELINE TOUCH
     ========================= */
 
-    const handleTouchStart = (event) => {
+    const handleTimelineTouchStart = (event) => {
         if (!event.touches?.length) {
             return;
         }
 
-        touchStartX.current = event.touches[0].clientX;
-        touchStartY.current = event.touches[0].clientY;
-        swipeHandled.current = false;
+        timelineTouchStartX.current = event.touches[0].clientX;
+
+        timelineTouchStartY.current = event.touches[0].clientY;
     };
 
-    const handleTouchMove = (event) => {
+    const handleTimelineTouchEnd = () => {
+        timelineTouchStartX.current = null;
+        timelineTouchStartY.current = null;
+    };
+
+    /* =========================
+       CARD TOUCH START
+    ========================= */
+
+    const handleCardTouchStart = (event) => {
+        if (!event.touches?.length) {
+            return;
+        }
+
+        cardTouchStartX.current = event.touches[0].clientX;
+
+        cardTouchStartY.current = event.touches[0].clientY;
+    };
+
+    /* =========================
+       CARD TOUCH END
+    ========================= */
+
+    const handleCardTouchEnd = (event) => {
         if (
-            touchStartX.current === null ||
-            touchStartY.current === null ||
-            swipeHandled.current ||
-            !event.touches?.length
+            cardTouchStartX.current === null ||
+            cardTouchStartY.current === null ||
+            !event.changedTouches?.length
         ) {
             return;
         }
 
-        const currentX = event.touches[0].clientX;
-        const currentY = event.touches[0].clientY;
+        const endX = event.changedTouches[0].clientX;
 
-        const deltaX = currentX - touchStartX.current;
-        const deltaY = currentY - touchStartY.current;
+        const endY = event.changedTouches[0].clientY;
 
-        if (Math.abs(deltaY) > Math.abs(deltaX)) {
+        const deltaX = endX - cardTouchStartX.current;
+
+        const deltaY = endY - cardTouchStartY.current;
+
+        const absX = Math.abs(deltaX);
+        const absY = Math.abs(deltaY);
+
+        /*
+         * Reset immediately so one gesture
+         * can only trigger one project change.
+         */
+        cardTouchStartX.current = null;
+        cardTouchStartY.current = null;
+
+        /*
+         * Ignore vertical scrolling.
+         */
+        if (absY >= absX) {
             return;
         }
 
-        if (Math.abs(deltaX) < 50) {
+        /*
+         * Ignore small horizontal movements.
+         */
+        if (absX < 50) {
             return;
         }
 
-        swipeHandled.current = true;
-
+        /*
+         * Swipe LEFT -> NEXT project
+         */
         if (deltaX < 0) {
             if (active < projects.length - 1) {
                 selectProject(active + 1, "next");
             }
-        } else {
-            if (active > 0) {
-                selectProject(active - 1, "previous");
-            }
+
+            return;
         }
 
-        touchStartX.current = null;
-        touchStartY.current = null;
+        /*
+         * Swipe RIGHT -> PREVIOUS project
+         */
+        if (active > 0) {
+            selectProject(active - 1, "previous");
+        }
     };
 
-    const handleTouchEnd = () => {
-        touchStartX.current = null;
-        touchStartY.current = null;
-        swipeHandled.current = false;
+    const handleCardTouchCancel = () => {
+        cardTouchStartX.current = null;
+        cardTouchStartY.current = null;
     };
 
     return (
@@ -150,9 +205,8 @@ export default function Projects() {
                 <div
                     ref={timelineRef}
                     className="project-timeline"
-                    onTouchStart={handleTouchStart}
-                    onTouchMove={handleTouchMove}
-                    onTouchEnd={handleTouchEnd}
+                    onTouchStart={handleTimelineTouchStart}
+                    onTouchEnd={handleTimelineTouchEnd}
                 >
                     <div className="project-timeline-inner">
                         <div className="project-track" />
@@ -191,7 +245,12 @@ export default function Projects() {
                     ACTIVE PROJECT
                 ========================= */}
 
-                <div className="project-view">
+                <div
+                    className="project-view"
+                    onTouchStart={handleCardTouchStart}
+                    onTouchEnd={handleCardTouchEnd}
+                    onTouchCancel={handleCardTouchCancel}
+                >
                     <article
                         className={`project-card project-card-${direction}`}
                         key={project.name}
@@ -303,7 +362,9 @@ export default function Projects() {
 
                     <span>
                         {String(active + 1).padStart(2, "0")}
+
                         <i>/</i>
+
                         {String(projects.length).padStart(2, "0")}
                     </span>
 

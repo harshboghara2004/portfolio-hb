@@ -273,8 +273,10 @@
 
 .project-view {
     margin-top: 45px;
-
     overflow: hidden;
+
+    touch-action: pan-y;
+    user-select: none;
 }
 
 .project-card {
@@ -822,6 +824,7 @@
 
     .project-view {
         margin-top: 40px;
+        touch-action: pan-y;
     }
 
     .project-card-head {
