@@ -1,0 +1,262 @@
+/* =========================
+   NAVBAR
+========================= */
+
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    z-index: 1000;
+
+    width: 100%;
+
+    border-bottom: 1px solid var(--border);
+
+    background: var(--bg);
+}
+
+/* =========================
+   NAV INNER
+========================= */
+
+.navbar-inner {
+    min-height: 72px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/*
+   IMPORTANT:
+   .navbar-inner already uses .wrap.
+
+   Do not add another max-width or width here.
+   This keeps the navbar aligned with the
+   rest of the website.
+*/
+
+/* =========================
+   LOGO
+========================= */
+
+.navbar-logo {
+    display: inline-flex;
+    align-items: center;
+
+    color: var(--text);
+
+    font-size: 28px;
+    font-weight: 700;
+
+    line-height: 1;
+
+    letter-spacing: -0.06em;
+
+    text-decoration: none;
+
+    transition: opacity 0.2s ease;
+}
+
+.navbar-logo span {
+    color: var(--accent);
+}
+
+.navbar-logo:hover {
+    opacity: 0.8;
+}
+
+/* =========================
+   DESKTOP LINKS
+========================= */
+
+.navbar-links {
+    display: flex;
+    align-items: center;
+
+    gap: 48px;
+}
+
+.navbar-links a {
+    position: relative;
+
+    color: var(--muted);
+
+    font-size: 15px;
+    font-weight: 400;
+
+    line-height: 1;
+
+    text-decoration: none;
+
+    transition: color 0.2s ease;
+}
+
+.navbar-links a::after {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    bottom: -9px;
+
+    width: 0;
+    height: 1px;
+
+    background: var(--accent);
+
+    transition: width 0.25s ease;
+}
+
+.navbar-links a:hover {
+    color: var(--text);
+}
+
+.navbar-links a:hover::after {
+    width: 100%;
+}
+
+/* =========================
+   MOBILE BUTTON
+========================= */
+
+.navbar-menu {
+    display: none;
+
+    width: 42px;
+    height: 42px;
+
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    gap: 6px;
+
+    padding: 0;
+
+    border: 1px solid var(--border);
+
+    background: transparent;
+
+    cursor: pointer;
+}
+
+.navbar-menu span {
+    display: block;
+
+    width: 17px;
+    height: 1px;
+
+    background: var(--text);
+
+    transition: transform 0.25s ease, opacity 0.2s ease;
+}
+
+.navbar-menu.is-open span:first-child {
+    transform: translateY(3.5px) rotate(45deg);
+}
+
+.navbar-menu.is-open span:last-child {
+    transform: translateY(-3.5px) rotate(-45deg);
+}
+
+/* =========================
+   MOBILE NAVIGATION
+========================= */
+
+.navbar-mobile {
+    display: none;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 700px) {
+    .navbar-inner {
+        min-height: 72px;
+    }
+
+    .navbar-logo {
+        font-size: 24px;
+    }
+
+    .navbar-links {
+        display: none;
+    }
+
+    .navbar-menu {
+        display: flex;
+    }
+
+    .navbar-mobile {
+        display: flex;
+        flex-direction: column;
+
+        max-height: 0;
+
+        overflow: hidden;
+
+        border-top: 0 solid var(--border);
+
+        background: var(--bg);
+
+        opacity: 0;
+
+        transition: max-height 0.3s ease, opacity 0.25s ease,
+            border-color 0.3s ease;
+    }
+
+    .navbar-mobile.is-open {
+        max-height: 420px;
+
+        border-top: 1px solid var(--border);
+
+        opacity: 1;
+    }
+
+    .navbar-mobile a {
+        display: flex;
+        align-items: center;
+
+        gap: 18px;
+
+        padding: 18px 0;
+
+        border-bottom: 1px solid var(--border);
+
+        color: var(--muted);
+
+        font-size: 15px;
+
+        text-decoration: none;
+
+        transition: color 0.2s ease;
+    }
+
+    .navbar-mobile a:hover {
+        color: var(--text);
+    }
+
+    .navbar-mobile a span {
+        color: var(--accent);
+
+        font-family: monospace;
+        font-size: 10px;
+    }
+}
+
+/* =========================
+   REDUCED MOTION
+========================= */
+
+@media (prefers-reduced-motion: reduce) {
+    .navbar-logo,
+    .navbar-links a,
+    .navbar-links a::after,
+    .navbar-menu span,
+    .navbar-mobile {
+        transition: none;
+    }
+}

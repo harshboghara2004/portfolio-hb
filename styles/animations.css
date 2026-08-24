@@ -1,0 +1,380 @@
+/* =========================================================
+   AMBIENT BACKGROUND
+========================================================= */
+
+.ambient-background {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: -1;
+
+    overflow: hidden;
+
+    pointer-events: none;
+
+    background: var(--bg);
+}
+
+/* Cursor-following glow */
+
+.ambient-cursor {
+    position: fixed;
+
+    top: -180px;
+    left: -180px;
+
+    width: 360px;
+    height: 360px;
+
+    border-radius: 50%;
+
+    pointer-events: none;
+
+    background: radial-gradient(
+        circle,
+        rgba(184, 255, 90, 0.1) 0%,
+        rgba(184, 255, 90, 0.055) 25%,
+        rgba(184, 255, 90, 0.018) 48%,
+        transparent 72%
+    );
+
+    filter: blur(12px);
+
+    transform: translate3d(-50%, -50%, 0);
+
+    will-change: transform;
+}
+
+/* =========================================================
+   SECTION ATMOSPHERE
+========================================================= */
+
+.ambient-section {
+    position: absolute;
+
+    width: 650px;
+    height: 650px;
+
+    border-radius: 50%;
+
+    filter: blur(100px);
+
+    opacity: 0.18;
+}
+
+/* Hero */
+
+.ambient-hero {
+    top: -300px;
+    right: -250px;
+
+    background: rgba(184, 255, 90, 0.055);
+}
+
+/* Experience */
+
+.ambient-experience {
+    top: 22%;
+
+    left: -400px;
+
+    background: rgba(80, 170, 255, 0.035);
+}
+
+/* Projects */
+
+.ambient-projects {
+    top: 42%;
+
+    right: -420px;
+
+    background: rgba(184, 255, 90, 0.04);
+}
+
+/* Skills */
+
+.ambient-skills {
+    top: 58%;
+
+    left: -420px;
+
+    background: rgba(130, 100, 255, 0.035);
+}
+
+/* Achievements */
+
+.ambient-achievements {
+    top: 73%;
+
+    right: -400px;
+
+    background: rgba(255, 180, 80, 0.025);
+}
+
+/* Contact */
+
+.ambient-contact {
+    bottom: -350px;
+
+    left: 35%;
+
+    background: rgba(184, 255, 90, 0.045);
+}
+
+/* =========================================================
+   SECTION REVEAL
+========================================================= */
+
+.section {
+    opacity: 0;
+
+    transform: translateY(24px);
+
+    transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.section.is-visible {
+    opacity: 1;
+
+    transform: translateY(0);
+}
+
+/* =========================================================
+   HEAD REVEAL
+========================================================= */
+
+.section.is-visible .section-number {
+    animation: sectionFadeUp 0.6s ease both;
+}
+
+.section.is-visible .section-label {
+    animation: sectionFadeUp 0.6s ease 0.06s both;
+}
+
+.section.is-visible .section-head h2 {
+    animation: sectionFadeUp 0.7s ease 0.12s both;
+}
+
+@keyframes sectionFadeUp {
+    from {
+        opacity: 0;
+
+        transform: translateY(14px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform: translateY(0);
+    }
+}
+
+/* =========================================================
+   CARD HOVER
+========================================================= */
+
+.project-card,
+.exp-card,
+.achievement-card {
+    position: relative;
+
+    overflow: hidden;
+
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+        border-color 0.3s ease, background 0.3s ease;
+}
+
+.project-card::before,
+.exp-card::before,
+.achievement-card::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 0;
+    height: 1px;
+
+    background: var(--accent);
+
+    transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+
+    z-index: 10;
+
+    pointer-events: none;
+}
+
+.project-card:hover::before,
+.exp-card:hover::before,
+.achievement-card:hover::before {
+    width: 100%;
+}
+
+.project-card:hover,
+.exp-card:hover,
+.achievement-card:hover {
+    border-color: #363636;
+
+    transform: translateY(-2px);
+}
+
+/* =========================================================
+   BUTTON MICRO INTERACTION
+========================================================= */
+
+button,
+a {
+    -webkit-tap-highlight-color: transparent;
+}
+
+.project-nav button,
+.exp-nav button,
+.achievement-nav {
+    transition: transform 0.25s ease, color 0.2s ease, border-color 0.2s ease,
+        background 0.2s ease;
+}
+
+.project-nav button:hover:not(:disabled),
+.exp-nav button:hover:not(:disabled),
+.achievement-nav:hover:not(:disabled) {
+    transform: translateY(-2px);
+}
+
+/* =========================================================
+   TIMELINE
+========================================================= */
+
+.exp-track,
+.project-track {
+    transform-origin: left center;
+}
+
+.section.is-visible .exp-track,
+.section.is-visible .project-track {
+    animation: timelineDraw 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes timelineDraw {
+    from {
+        transform: scaleX(0);
+    }
+
+    to {
+        transform: scaleX(1);
+    }
+}
+
+/* =========================================================
+   ACTIVE DOT
+========================================================= */
+
+.exp-point.active .exp-dot,
+.project-point.active .project-dot {
+    animation: timelineDotIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both,
+        expPulse 2s ease-in-out 0.5s infinite;
+}
+
+@keyframes timelineDotIn {
+    from {
+        transform: scale(0.6);
+        opacity: 0.5;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* =========================================================
+   TECH TAGS
+========================================================= */
+
+.project-tech span,
+.exp-tech span {
+    transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.project-tech span:hover,
+.exp-tech span:hover {
+    transform: translateY(-2px);
+}
+
+/* =========================================================
+   CONTACT LINKS
+========================================================= */
+
+.contact a {
+    transition: color 0.25s ease, opacity 0.25s ease, transform 0.25s ease;
+}
+
+.contact a:hover {
+    transform: translateY(-1px);
+}
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    .ambient-background {
+        display: none;
+    }
+
+    .section {
+        opacity: 1;
+
+        transform: none;
+
+        transition: none;
+    }
+
+    .section.is-visible .section-number,
+    .section.is-visible .section-label,
+    .section.is-visible .section-head h2 {
+        animation: none;
+    }
+
+    .section.is-visible .exp-track,
+    .section.is-visible .project-track {
+        animation: none;
+    }
+
+    .project-card,
+    .exp-card,
+    .achievement-card,
+    .project-tech span,
+    .exp-tech span {
+        transition: none;
+    }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+    .ambient-cursor {
+        display: none;
+    }
+
+    .ambient-section {
+        width: 450px;
+        height: 450px;
+
+        filter: blur(80px);
+
+        opacity: 0.12;
+    }
+
+    .project-card:hover,
+    .exp-card:hover,
+    .achievement-card:hover {
+        transform: none;
+    }
+}

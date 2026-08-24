@@ -99,7 +99,7 @@ export default function Hero() {
     }, []);
 
     return (
-        <section className="hero" id="about">
+        <section className="hero" id="">
             <div className="hero-inner">
                 <div className="hero-main">
                     <p className="hero-intro">
@@ -124,7 +124,7 @@ export default function Hero() {
                     <h1 className="hero-title">
                         Building secure
                         <br />
-                        <span>systems with C++.</span>
+                        <span>systems with C++</span>
                     </h1>
 
                     <p className="hero-description">

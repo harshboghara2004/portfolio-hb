@@ -1,3 +1,6 @@
+@import "../styles/achievements.css";
+@import "../styles/animations.css";
+
 :root {
     --bg: #090909;
     --surface: #101010;
@@ -27,8 +30,18 @@ body {
     background: var(--bg);
     color: var(--text);
 
+    padding-top: 105px;
+
     font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI",
         sans-serif;
+
+    overflow-x: hidden;
+}
+
+@media (max-width: 700px) {
+    body {
+        padding-top: 72px;
+    }
 }
 
 body,
@@ -47,35 +60,13 @@ a {
     -webkit-tap-highlight-color: transparent;
 }
 
+button {
+    font-family: inherit;
+}
+
 .wrap {
     width: min(var(--max), calc(100% - 48px));
     margin: 0 auto;
-}
-
-/* =========================
-   NAV
-========================= */
-
-.nav {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 100;
-
-    width: 100%;
-
-    background: rgba(9, 9, 9, 0.78);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-
-    backdrop-filter: blur(18px);
-}
-
-.nav-inner {
-    height: 72px;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
 }
 
 .logo {
@@ -86,40 +77,6 @@ a {
 
 .logo span {
     color: var(--accent);
-}
-
-.nav-links {
-    display: flex;
-    align-items: center;
-    gap: 30px;
-}
-
-.nav-links a {
-    color: var(--muted);
-
-    font-size: 13px;
-
-    transition: color 0.2s ease;
-}
-
-.nav-links a:hover {
-    color: var(--text);
-}
-
-.nav-contact {
-    padding: 9px 15px;
-
-    border: 1px solid var(--border);
-    border-radius: 3px;
-
-    font-size: 13px;
-
-    transition: border-color 0.2s ease, background 0.2s ease;
-}
-
-.nav-contact:hover {
-    background: var(--surface-2);
-    border-color: #3a3a3a;
 }
 
 /* =========================
@@ -222,7 +179,9 @@ a {
     color: var(--accent);
 }
 
-/* About focus */
+/* =========================
+   ABOUT FOCUS
+========================= */
 
 .about-focus {
     align-self: start;
@@ -449,11 +408,13 @@ a {
     font-family: monospace;
     font-size: 11px;
 
-    transition: color 0.2s ease;
+    transition: color 0.2s ease, transform 0.2s ease;
 }
 
 .contact-links a:hover {
     color: var(--accent);
+
+    transform: translateY(-1px);
 }
 
 /* =========================
@@ -514,7 +475,7 @@ a {
 }
 
 /* =========================
-   MOBILE
+   MOBILE / TABLET
 ========================= */
 
 @media (max-width: 900px) {
@@ -687,15 +648,6 @@ a {
 @media (max-width: 700px) {
     .wrap {
         width: min(var(--max), calc(100% - 32px));
-    }
-
-    .nav-links,
-    .nav-contact {
-        display: none;
-    }
-
-    .nav-inner {
-        height: 64px;
     }
 
     .hero {

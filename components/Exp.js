@@ -5,78 +5,68 @@ import { experience } from "../data/exp";
 
 export default function Exp() {
     const [active, setActive] = useState(0);
-    const [swipeDirection, setSwipeDirection] = useState("");
+    const [direction, setDirection] = useState("next");
+    const [isAnimating, setIsAnimating] = useState(false);
 
-    const swipeStart = useRef(null);
-    const swipeCurrent = useRef(null);
+    const touchStartX = useRef(0);
+    const touchCurrentX = useRef(0);
 
     const item = experience[active];
 
+    const changeExperience = (nextIndex, swipeDirection) => {
+        if (isAnimating || nextIndex === active) return;
+
+        setDirection(swipeDirection);
+        setIsAnimating(true);
+
+        setTimeout(() => {
+            setActive(nextIndex);
+
+            requestAnimationFrame(() => {
+                setIsAnimating(false);
+            });
+        }, 180);
+    };
+
     const selectExperience = (index) => {
-        setActive(index);
+        if (index === active || isAnimating) return;
+
+        changeExperience(index, index > active ? "next" : "previous");
     };
 
-    const goPrevious = () => {
-        if (active === 0) return;
+    const nextExperience = () => {
+        if (active >= experience.length - 1) return;
 
-        setSwipeDirection("right");
-        setActive((current) => current - 1);
+        changeExperience(active + 1, "next");
     };
 
-    const goNext = () => {
-        if (active === experience.length - 1) return;
+    const previousExperience = () => {
+        if (active <= 0) return;
 
-        setSwipeDirection("left");
-        setActive((current) => current + 1);
+        changeExperience(active - 1, "previous");
     };
 
-    /* =========================
-       SWIPE / DRAG
-    ========================= */
-
-    const handlePointerDown = (event) => {
-        swipeStart.current = event.clientX;
-        swipeCurrent.current = event.clientX;
-
-        event.currentTarget.setPointerCapture?.(event.pointerId);
+    const handleTouchStart = (event) => {
+        touchStartX.current = event.touches[0].clientX;
+        touchCurrentX.current = event.touches[0].clientX;
     };
 
-    const handlePointerMove = (event) => {
-        if (swipeStart.current === null) {
-            return;
+    const handleTouchMove = (event) => {
+        touchCurrentX.current = event.touches[0].clientX;
+    };
+
+    const handleTouchEnd = () => {
+        const distance = touchCurrentX.current - touchStartX.current;
+
+        const threshold = 60;
+
+        if (Math.abs(distance) < threshold) return;
+
+        if (distance < 0) {
+            nextExperience();
+        } else {
+            previousExperience();
         }
-
-        swipeCurrent.current = event.clientX;
-    };
-
-    const handlePointerUp = (event) => {
-        if (swipeStart.current === null || swipeCurrent.current === null) {
-            return;
-        }
-
-        const distance = swipeCurrent.current - swipeStart.current;
-
-        if (Math.abs(distance) >= 60) {
-            if (distance < 0) {
-                // Swipe left → next
-                goNext();
-            } else {
-                // Swipe right → previous
-                goPrevious();
-            }
-        }
-
-        swipeStart.current = null;
-        swipeCurrent.current = null;
-
-        event.currentTarget.releasePointerCapture?.(event.pointerId);
-    };
-
-    const handlePointerCancel = (event) => {
-        swipeStart.current = null;
-        swipeCurrent.current = null;
-
-        event.currentTarget.releasePointerCapture?.(event.pointerId);
     };
 
     return (
@@ -96,9 +86,12 @@ export default function Exp() {
                     </div>
                 </div>
 
-                {/* Timeline */}
-
-                <div className="exp-timeline">
+                <div
+                    className="exp-timeline"
+                    style={{
+                        "--experience-count": experience.length,
+                    }}
+                >
                     <div className="exp-track" />
 
                     {experience.map((company, index) => (
@@ -125,21 +118,17 @@ export default function Exp() {
                     ))}
                 </div>
 
-                {/* Active company */}
-
                 <div
-                    className="exp-view"
-                    onPointerDown={handlePointerDown}
-                    onPointerMove={handlePointerMove}
-                    onPointerUp={handlePointerUp}
-                    onPointerCancel={handlePointerCancel}
+                    className={`exp-view ${
+                        isAnimating
+                            ? `exp-swiping-${direction}`
+                            : `exp-swiped-in-${direction}`
+                    }`}
+                    onTouchStart={handleTouchStart}
+                    onTouchMove={handleTouchMove}
+                    onTouchEnd={handleTouchEnd}
                 >
-                    <article
-                        className={`exp-card ${
-                            swipeDirection ? `exp-swipe-${swipeDirection}` : ""
-                        }`}
-                        onAnimationEnd={() => setSwipeDirection("")}
-                    >
+                    <article className="exp-card">
                         <div className="exp-card-head">
                             <div>
                                 <p className="exp-type">{item.type}</p>
@@ -167,10 +156,6 @@ export default function Exp() {
                                     <i />
                                     {item.location}
                                 </span>
-
-                                <span className="exp-period">
-                                    {item.period}
-                                </span>
                             </div>
                         </div>
 
@@ -195,12 +180,10 @@ export default function Exp() {
                     </article>
                 </div>
 
-                {/* Navigation */}
-
                 <div className="exp-nav">
                     <button
-                        onClick={goPrevious}
-                        disabled={active === 0}
+                        onClick={previousExperience}
+                        disabled={active === 0 || isAnimating}
                         aria-label="Previous experience"
                     >
                         ←
@@ -213,8 +196,10 @@ export default function Exp() {
                     </span>
 
                     <button
-                        onClick={goNext}
-                        disabled={active === experience.length - 1}
+                        onClick={nextExperience}
+                        disabled={
+                            active === experience.length - 1 || isAnimating
+                        }
                         aria-label="Next experience"
                     >
                         →

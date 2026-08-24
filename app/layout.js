@@ -5,6 +5,9 @@ import "../styles/skills.css";
 import "../styles/achievements.css";
 import "../styles/contact.css";
 import "../styles/hero.css";
+import "../styles/nav.css";
+import AmbientBackground from "../components/AmbientBackground";
+import ScrollReveal from "../components/ScrollReveal";
 
 export const metadata = {
     title: "Harsh Boghara | Backend Developer",
@@ -18,7 +21,11 @@ export const metadata = {
 export default function RootLayout({ children }) {
     return (
         <html lang="en">
-            <body>{children}</body>
+            <body>
+                <AmbientBackground />
+                <ScrollReveal />
+                {children}
+            </body>
         </html>
     );
 }

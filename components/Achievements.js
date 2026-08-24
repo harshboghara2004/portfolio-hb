@@ -7,62 +7,147 @@ export default function Achievements() {
     const [active, setActive] = useState(0);
     const [dragX, setDragX] = useState(0);
     const [dragging, setDragging] = useState(false);
+    const [direction, setDirection] = useState("next");
 
     const startX = useRef(0);
+    const startY = useRef(0);
+    const didSwipe = useRef(false);
 
     const achievement = achievements[active];
 
+    /* =========================
+       NAVIGATION
+    ========================= */
+
     const previous = () => {
-        setActive((current) => Math.max(0, current - 1));
+        setActive((current) => {
+            if (current === 0) {
+                return current;
+            }
+
+            setDirection("previous");
+
+            return current - 1;
+        });
     };
 
     const next = () => {
-        setActive((current) => Math.min(achievements.length - 1, current + 1));
+        setActive((current) => {
+            if (current === achievements.length - 1) {
+                return current;
+            }
+
+            setDirection("next");
+
+            return current + 1;
+        });
     };
+
+    /* =========================
+       POINTER DOWN
+    ========================= */
 
     const handlePointerDown = (event) => {
         startX.current = event.clientX;
+        startY.current = event.clientY;
+
+        didSwipe.current = false;
 
         setDragging(true);
 
         event.currentTarget.setPointerCapture(event.pointerId);
     };
 
+    /* =========================
+       POINTER MOVE
+    ========================= */
+
     const handlePointerMove = (event) => {
-        if (!dragging) return;
-
-        const distance = event.clientX - startX.current;
-
-        // Small resistance while dragging beyond boundaries
-        if (
-            (active === 0 && distance > 0) ||
-            (active === achievements.length - 1 && distance < 0)
-        ) {
-            setDragX(distance * 0.25);
+        if (!dragging) {
             return;
         }
 
-        setDragX(distance);
+        const distanceX = event.clientX - startX.current;
+        const distanceY = event.clientY - startY.current;
+
+        /*
+         * Ignore mostly vertical movement.
+         */
+        if (Math.abs(distanceY) > Math.abs(distanceX)) {
+            return;
+        }
+
+        /*
+         * Resistance at the boundaries.
+         */
+        if (
+            (active === 0 && distanceX > 0) ||
+            (active === achievements.length - 1 && distanceX < 0)
+        ) {
+            setDragX(distanceX * 0.25);
+            return;
+        }
+
+        setDragX(distanceX);
     };
 
-    const handlePointerUp = () => {
-        if (!dragging) return;
+    /* =========================
+       POINTER UP
+    ========================= */
+
+    const handlePointerUp = (event) => {
+        if (!dragging) {
+            return;
+        }
+
+        const distance = event.clientX - startX.current;
 
         const threshold = 70;
 
-        if (dragX < -threshold) {
-            next();
-        } else if (dragX > threshold) {
-            previous();
+        if (
+            Math.abs(distance) >= threshold &&
+            Math.abs(distance) >= Math.abs(event.clientY - startY.current)
+        ) {
+            didSwipe.current = true;
+
+            if (distance < 0) {
+                // Swipe left -> next
+                if (active < achievements.length - 1) {
+                    setDirection("next");
+                    setActive((current) => current + 1);
+                }
+            } else {
+                // Swipe right -> previous
+                if (active > 0) {
+                    setDirection("previous");
+                    setActive((current) => current - 1);
+                }
+            }
         }
 
         setDragging(false);
         setDragX(0);
+
+        try {
+            event.currentTarget.releasePointerCapture(event.pointerId);
+        } catch {
+            // Pointer may already have been released.
+        }
     };
 
-    const handlePointerCancel = () => {
+    /* =========================
+       POINTER CANCEL
+    ========================= */
+
+    const handlePointerCancel = (event) => {
         setDragging(false);
         setDragX(0);
+
+        try {
+            event.currentTarget.releasePointerCapture(event.pointerId);
+        } catch {
+            // Pointer may already have been released.
+        }
     };
 
     return (
@@ -96,7 +181,13 @@ export default function Achievements() {
                         }}
                     >
                         <article
-                            className="achievement-card"
+                            className={`achievement-card ${
+                                dragging ? "is-dragging" : ""
+                            } ${
+                                direction === "next"
+                                    ? "slide-next"
+                                    : "slide-previous"
+                            }`}
                             key={achievement.title}
                         >
                             <div className="achievement-content">

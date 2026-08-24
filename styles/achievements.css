@@ -7,16 +7,18 @@
 }
 
 /* =========================
-     CARD SLIDER
-  ========================= */
+   CARD SLIDER
+========================= */
 
 .achievement-slider {
     width: 100%;
+
     margin-top: 60px;
 }
 
 .achievement-viewport {
     width: 100%;
+
     min-width: 0;
 
     overflow: hidden;
@@ -24,6 +26,8 @@
     touch-action: pan-y;
 
     cursor: grab;
+
+    user-select: none;
 }
 
 .achievement-viewport.dragging {
@@ -31,13 +35,14 @@
 }
 
 /* =========================
-     CARD
-  ========================= */
+   CARD
+========================= */
 
 .achievement-card {
     position: relative;
 
     width: 100%;
+
     min-height: 420px;
 
     border: 1px solid var(--border);
@@ -48,17 +53,72 @@
 
     user-select: none;
 
+    /*
+     * While dragging, this follows the pointer.
+     */
     transform: translateX(var(--drag-x, 0px));
 
-    transition: transform 0.35s ease, border-color 0.3s ease,
-        background 0.3s ease;
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+        border-color 0.3s ease, background 0.3s ease;
 
-    animation: achievementIn 0.35s ease;
+    animation-duration: 0.4s;
+
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+
+    animation-fill-mode: both;
 }
+
+/* Disable transition while physically dragging */
 
 .achievement-viewport.dragging .achievement-card {
     transition: none;
+
+    animation: none;
 }
+
+/* =========================
+   SWIPE ENTRANCE
+========================= */
+
+.achievement-card.slide-next {
+    animation-name: achievementSlideNext;
+}
+
+.achievement-card.slide-previous {
+    animation-name: achievementSlidePrevious;
+}
+
+@keyframes achievementSlideNext {
+    from {
+        opacity: 0;
+
+        transform: translateX(45px) translateY(0);
+    }
+
+    to {
+        opacity: 1;
+
+        transform: translateX(0) translateY(0);
+    }
+}
+
+@keyframes achievementSlidePrevious {
+    from {
+        opacity: 0;
+
+        transform: translateX(-45px) translateY(0);
+    }
+
+    to {
+        opacity: 1;
+
+        transform: translateX(0) translateY(0);
+    }
+}
+
+/* =========================
+   CARD TOP ACCENT
+========================= */
 
 .achievement-card::before {
     content: "";
@@ -69,32 +129,23 @@
     left: 0;
 
     width: 0;
+
     height: 1px;
 
     background: var(--accent);
 
     transition: width 0.35s ease;
+
+    z-index: 5;
 }
 
 .achievement-card:hover::before {
     width: 100%;
 }
 
-@keyframes achievementIn {
-    from {
-        opacity: 0;
-        transform: translateX(15px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
 /* =========================
-     CONTENT
-  ========================= */
+   CONTENT
+========================= */
 
 .achievement-content {
     min-width: 0;
@@ -103,12 +154,14 @@
 }
 
 /* =========================
-     HEADER
-  ========================= */
+   HEADER
+========================= */
 
 .achievement-card-head {
     display: flex;
+
     align-items: flex-start;
+
     justify-content: space-between;
 
     gap: 30px;
@@ -124,6 +177,7 @@
     color: var(--accent);
 
     font-family: monospace;
+
     font-size: 10px;
 
     letter-spacing: 0.1em;
@@ -133,6 +187,7 @@
     color: var(--text);
 
     font-size: 38px;
+
     font-weight: 600;
 
     line-height: 1.05;
@@ -148,14 +203,15 @@
     color: var(--dim);
 
     font-family: monospace;
+
     font-size: 10px;
 
     white-space: nowrap;
 }
 
 /* =========================
-     HIGHLIGHT
-  ========================= */
+   HIGHLIGHT
+========================= */
 
 .achievement-highlight {
     margin-top: 18px;
@@ -163,12 +219,13 @@
     color: var(--text);
 
     font-family: monospace;
+
     font-size: 14px;
 }
 
 /* =========================
-     DESCRIPTION
-  ========================= */
+   DESCRIPTION
+========================= */
 
 .achievement-description {
     max-width: 900px;
@@ -183,8 +240,8 @@
 }
 
 /* =========================
-     POINTS
-  ========================= */
+   POINTS
+========================= */
 
 .achievement-points {
     max-width: 1000px;
@@ -196,6 +253,7 @@
 
 .achievement-points > div {
     display: flex;
+
     align-items: flex-start;
 
     gap: 12px;
@@ -209,6 +267,7 @@
     flex: 0 0 6px;
 
     width: 6px;
+
     height: 6px;
 
     margin-top: 7px;
@@ -227,11 +286,12 @@
 }
 
 /* =========================
-     CERTIFICATE LINK
-  ========================= */
+   CERTIFICATE LINK
+========================= */
 
 .achievement-certificate-link {
     display: inline-flex;
+
     align-items: center;
 
     margin-top: 24px;
@@ -245,6 +305,7 @@
     color: var(--text);
 
     font-family: monospace;
+
     font-size: 10px;
 
     letter-spacing: 0.06em;
@@ -266,13 +327,14 @@
 }
 
 /* =========================
-     BOTTOM CONTROLS
-  ========================= */
+   BOTTOM CONTROLS
+========================= */
 
 .achievement-controls {
     display: flex;
 
     align-items: center;
+
     justify-content: center;
 
     gap: 26px;
@@ -282,10 +344,13 @@
 
 .achievement-nav {
     width: 48px;
+
     height: 48px;
 
     display: flex;
+
     align-items: center;
+
     justify-content: center;
 
     padding: 0;
@@ -297,12 +362,13 @@
     color: var(--text);
 
     font-size: 21px;
+
     line-height: 1;
 
     cursor: pointer;
 
     transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease,
-        transform 0.2s ease;
+        transform 0.2s ease, opacity 0.2s ease;
 }
 
 .achievement-nav:hover:not(:disabled) {
@@ -323,6 +389,8 @@
     background: #0b0b0b;
 
     cursor: default;
+
+    opacity: 0.6;
 }
 
 .achievement-counter {
@@ -331,14 +399,15 @@
     color: var(--dim);
 
     font-family: monospace;
+
     font-size: 10px;
 
     text-align: center;
 }
 
 /* =========================
-     TABLET
-  ========================= */
+   TABLET
+========================= */
 
 @media (max-width: 1000px) {
     .achievement-card h3 {
@@ -351,8 +420,8 @@
 }
 
 /* =========================
-     MOBILE
-  ========================= */
+   MOBILE
+========================= */
 
 @media (max-width: 700px) {
     .achievement-slider {
@@ -409,6 +478,7 @@
 
     .achievement-nav {
         width: 42px;
+
         height: 42px;
 
         font-size: 18px;
@@ -416,8 +486,8 @@
 }
 
 /* =========================
-     REDUCED MOTION
-  ========================= */
+   REDUCED MOTION
+========================= */
 
 @media (prefers-reduced-motion: reduce) {
     .achievement-card,

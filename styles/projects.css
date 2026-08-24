@@ -15,26 +15,39 @@
 
     margin-top: 65px;
 
-    padding: 0 30px;
+    /*
+     * Extra top padding prevents the active
+     * circle from ever being clipped.
+     */
+    padding: 9px 30px 12px;
+
+    overflow: visible;
+
+    touch-action: pan-y;
+
+    user-select: none;
+
+    cursor: grab;
+}
+
+.project-timeline:active {
+    cursor: grabbing;
 }
 
 .project-timeline-points {
     position: relative;
+
     z-index: 5;
 
     display: flex;
+
     align-items: flex-start;
+
     justify-content: space-between;
 
     width: 100%;
 
     overflow: visible;
-
-    scrollbar-width: none;
-}
-
-.project-timeline-points::-webkit-scrollbar {
-    display: none;
 }
 
 /* =========================
@@ -44,23 +57,23 @@
 .project-track {
     position: absolute;
 
+    /*
+     * Start/end at the center of the
+     * first and last dots.
+     */
     left: calc(30px + (100% - 60px) / (var(--project-count) * 2));
 
     right: calc(30px + (100% - 60px) / (var(--project-count) * 2));
 
-    top: 7px;
+    top: 16px;
 
-    height: 2px;
+    height: 1px;
 
     z-index: 1;
 
-    background: #252525;
+    background: var(--border);
 
     pointer-events: none;
-}
-
-.project-track-active {
-    display: none;
 }
 
 /* =========================
@@ -69,17 +82,20 @@
 
 .project-point {
     position: relative;
+
     z-index: 5;
 
     flex: 1 0 0;
 
     display: flex;
+
     flex-direction: column;
+
     align-items: center;
 
-    min-width: 180px;
+    min-width: 150px;
 
-    padding: 0;
+    padding: 0 10px;
 
     border: 0;
 
@@ -90,10 +106,17 @@
     cursor: pointer;
 
     text-align: center;
+
+    -webkit-tap-highlight-color: transparent;
 }
+
+/* =========================
+   DOT
+========================= */
 
 .project-dot {
     position: relative;
+
     z-index: 10;
 
     display: block;
@@ -103,13 +126,13 @@
 
     flex: 0 0 16px;
 
+    box-sizing: border-box;
+
     border: 1px solid #555;
 
     border-radius: 50%;
 
     background: var(--bg);
-
-    box-sizing: border-box;
 
     transition: transform 0.3s ease, border-color 0.3s ease,
         background 0.3s ease, box-shadow 0.3s ease;
@@ -130,7 +153,7 @@
     }
 
     50% {
-        box-shadow: 0 0 0 6px rgba(184, 255, 90, 0.08);
+        box-shadow: 0 0 0 7px rgba(184, 255, 90, 0.08);
     }
 }
 
@@ -140,14 +163,20 @@
     border-color: var(--accent);
 }
 
-/* Point text */
+/* =========================
+   PROJECT NAME / DATE
+========================= */
 
 .project-point-info {
     display: flex;
+
     flex-direction: column;
+
     align-items: center;
 
-    gap: 4px;
+    gap: 5px;
+
+    min-height: 32px;
 
     margin-top: 12px;
 }
@@ -156,29 +185,46 @@
     color: var(--muted);
 
     font-family: monospace;
-    font-size: 12px;
+
+    font-size: 11px;
+
     font-weight: 500;
 
     letter-spacing: 0.03em;
+
+    white-space: nowrap;
 
     transition: color 0.25s ease;
 }
 
 .project-point-date {
-    color: var(--dim);
+    color: var(--accent);
 
     font-family: monospace;
+
     font-size: 10px;
 
-    transition: color 0.25s ease;
+    white-space: nowrap;
+
+    animation: projectDateIn 0.3s ease;
 }
 
 .project-point.active .project-point-short {
     color: var(--text);
 }
 
-.project-point.active .project-point-date {
-    color: var(--accent);
+@keyframes projectDateIn {
+    from {
+        opacity: 0;
+
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform: translateY(0);
+    }
 }
 
 /* =========================
@@ -188,69 +234,67 @@
 .project-view {
     margin-top: 45px;
 
-    touch-action: pan-y;
-
-    user-select: none;
-
-    cursor: grab;
-}
-
-.project-view:active {
-    cursor: grabbing;
+    overflow: hidden;
 }
 
 .project-card {
     position: relative;
 
-    overflow: hidden;
-
     border: 1px solid var(--border);
 
     background: var(--surface);
+
+    overflow: hidden;
+
+    animation-duration: 0.4s;
+
+    animation-timing-function: ease;
+
+    animation-fill-mode: both;
 }
 
 /* =========================
-   SWIPE ANIMATION
+   CARD SWIPE ANIMATION
 ========================= */
 
-.project-swipe-left {
-    animation: projectSwipeLeft 0.32s ease both;
+.project-card-next {
+    animation-name: projectCardNext;
 }
 
-.project-swipe-right {
-    animation: projectSwipeRight 0.32s ease both;
+.project-card-previous {
+    animation-name: projectCardPrevious;
 }
 
-@keyframes projectSwipeLeft {
-    0% {
-        opacity: 0.45;
+@keyframes projectCardNext {
+    from {
+        opacity: 0;
 
-        transform: translateX(28px);
+        transform: translateX(28px) translateY(4px);
     }
 
-    100% {
+    to {
         opacity: 1;
 
-        transform: translateX(0);
+        transform: translateX(0) translateY(0);
     }
 }
 
-@keyframes projectSwipeRight {
-    0% {
-        opacity: 0.45;
+@keyframes projectCardPrevious {
+    from {
+        opacity: 0;
 
-        transform: translateX(-28px);
+        transform: translateX(-28px) translateY(4px);
     }
 
-    100% {
+    to {
         opacity: 1;
 
-        transform: translateX(0);
+        transform: translateX(0) translateY(0);
     }
 }
 
 /* =========================
-   CARD TOP ACCENT
+   CARD TOP ACCENT ANIMATION
 ========================= */
 
 .project-card::before {
@@ -258,17 +302,20 @@
 
     position: absolute;
 
-    top: 0;
+    top: -1px;
     left: 0;
 
     width: 0;
-    height: 1px;
+
+    height: 2px;
+
+    z-index: 20;
 
     background: var(--accent);
 
-    z-index: 10;
+    transition: width 0.45s ease;
 
-    transition: width 0.4s ease;
+    pointer-events: none;
 }
 
 .project-card:hover::before {
@@ -281,6 +328,7 @@
 
 .project-card-head {
     display: flex;
+
     justify-content: space-between;
 
     gap: 40px;
@@ -300,6 +348,7 @@
     color: var(--accent);
 
     font-family: monospace;
+
     font-size: 10px;
 
     letter-spacing: 0.1em;
@@ -319,6 +368,7 @@
 
 .project-meta {
     display: flex;
+
     align-items: flex-start;
 
     padding-top: 4px;
@@ -326,6 +376,7 @@
 
 .project-links {
     display: flex;
+
     align-items: center;
 
     gap: 18px;
@@ -333,11 +384,13 @@
 
 .project-link {
     display: inline-flex;
+
     align-items: center;
 
     color: var(--text);
 
     font-family: monospace;
+
     font-size: 10px;
 
     letter-spacing: 0.04em;
@@ -367,7 +420,9 @@
     padding: 22px 30px 25px;
 }
 
-/* Description */
+/* =========================
+   DESCRIPTION
+========================= */
 
 .project-description {
     max-width: 850px;
@@ -395,6 +450,7 @@
     color: var(--accent);
 
     font-family: monospace;
+
     font-size: 9px;
 
     letter-spacing: 0.12em;
@@ -406,6 +462,7 @@
 
 .project-tech {
     display: flex;
+
     flex-wrap: wrap;
 
     gap: 6px;
@@ -421,6 +478,7 @@
     color: var(--text);
 
     font-family: monospace;
+
     font-size: 10px;
 
     transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
@@ -446,6 +504,7 @@
     margin-top: 22px;
 
     border-top: 1px solid var(--border);
+
     border-left: 1px solid var(--border);
 }
 
@@ -453,6 +512,7 @@
     min-height: 0;
 
     display: flex;
+
     align-items: baseline;
 
     gap: 18px;
@@ -460,6 +520,7 @@
     padding: 13px 16px;
 
     border-right: 1px solid var(--border);
+
     border-bottom: 1px solid var(--border);
 }
 
@@ -471,6 +532,7 @@
     color: var(--dim);
 
     font-family: monospace;
+
     font-size: 8px;
 
     letter-spacing: 0.09em;
@@ -494,6 +556,7 @@
 
 .project-points {
     display: flex;
+
     flex-direction: column;
 
     border-top: 1px solid var(--border);
@@ -501,6 +564,7 @@
 
 .project-points > div {
     display: flex;
+
     align-items: flex-start;
 
     gap: 11px;
@@ -537,7 +601,9 @@
 
 .project-nav {
     display: flex;
+
     align-items: center;
+
     justify-content: center;
 
     gap: 18px;
@@ -550,7 +616,9 @@
     height: 32px;
 
     display: flex;
+
     align-items: center;
+
     justify-content: center;
 
     border: 1px solid var(--border);
@@ -561,10 +629,11 @@
 
     cursor: pointer;
 
-    transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease,
+        opacity 0.2s ease;
 }
 
-.project-nav button:hover {
+.project-nav button:hover:not(:disabled) {
     color: var(--accent);
 
     border-color: #444;
@@ -572,10 +641,21 @@
     background: var(--surface);
 }
 
+.project-nav button:disabled {
+    color: #333;
+
+    border-color: #222;
+
+    opacity: 0.45;
+
+    cursor: not-allowed;
+}
+
 .project-nav > span {
     color: var(--dim);
 
     font-family: monospace;
+
     font-size: 10px;
 }
 
@@ -587,26 +667,6 @@
     font-style: normal;
 }
 
-.project-nav button:disabled {
-    color: #333;
-
-    border-color: #222;
-
-    background: transparent;
-
-    opacity: 0.5;
-
-    cursor: not-allowed;
-}
-
-.project-nav button:disabled:hover {
-    color: #333;
-
-    border-color: #222;
-
-    background: transparent;
-}
-
 /* =========================
    MOBILE
 ========================= */
@@ -615,18 +675,25 @@
     .project-timeline {
         margin-top: 50px;
 
-        padding: 0;
+        padding: 9px 0 12px;
 
-        overflow: hidden;
+        overflow-x: auto;
+
+        overflow-y: visible;
+
+        scrollbar-width: none;
+    }
+
+    .project-timeline::-webkit-scrollbar {
+        display: none;
     }
 
     .project-timeline-points {
         justify-content: flex-start;
 
-        overflow-x: auto;
-        overflow-y: visible;
+        width: max-content;
 
-        padding: 0 0 5px;
+        min-width: 100%;
     }
 
     .project-point {
@@ -637,6 +704,7 @@
 
     .project-track {
         left: 75px;
+
         right: auto;
 
         width: calc(150px * (var(--project-count) - 1));
