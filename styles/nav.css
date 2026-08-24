@@ -28,15 +28,6 @@
     justify-content: space-between;
 }
 
-/*
-   IMPORTANT:
-   .navbar-inner already uses .wrap.
-
-   Do not add another max-width or width here.
-   This keeps the navbar aligned with the
-   rest of the website.
-*/
-
 /* =========================
    LOGO
 ========================= */
@@ -136,6 +127,7 @@
     padding: 0;
 
     border: 1px solid var(--border);
+    border-radius: 8px;
 
     background: transparent;
 
@@ -166,7 +158,86 @@
 ========================= */
 
 .navbar-mobile {
-    display: none;
+    position: fixed;
+
+    top: 88px;
+    left: 0;
+    right: 0;
+
+    width: auto;
+
+    z-index: 999;
+
+    display: flex;
+    flex-direction: column;
+
+    max-height: 0;
+
+    overflow: hidden;
+
+    border: 1px solid transparent;
+
+    background: var(--bg);
+
+    opacity: 0;
+    visibility: hidden;
+
+    transform: translateY(-10px);
+
+    transition: max-height 0.35s ease, opacity 0.25s ease, transform 0.25s ease,
+        visibility 0.25s ease, border-color 0.25s ease;
+}
+
+.navbar-mobile.is-open {
+    max-height: 420px;
+
+    border-color: var(--border);
+
+    opacity: 1;
+    visibility: visible;
+
+    transform: translateY(0);
+}
+
+.navbar-mobile a {
+    min-height: 64px;
+
+    display: grid;
+    grid-template-columns: 45px 1fr;
+
+    align-items: center;
+
+    padding: 0 22px;
+
+    border-bottom: 1px solid var(--border);
+
+    color: var(--muted);
+
+    font-size: 18px;
+    font-weight: 400;
+
+    text-decoration: none;
+
+    transition: color 0.2s ease, background 0.2s ease, padding-left 0.2s ease;
+}
+
+.navbar-mobile a:last-child {
+    border-bottom: none;
+}
+
+.navbar-mobile a:hover {
+    color: var(--text);
+
+    background: var(--surface);
+
+    padding-left: 26px;
+}
+
+.navbar-mobile a span {
+    color: var(--accent);
+
+    font-family: monospace;
+    font-size: 11px;
 }
 
 /* =========================
@@ -191,59 +262,9 @@
     }
 
     .navbar-mobile {
-        display: flex;
-        flex-direction: column;
-
-        max-height: 0;
-
-        overflow: hidden;
-
-        border-top: 0 solid var(--border);
-
-        background: var(--bg);
-
-        opacity: 0;
-
-        transition: max-height 0.3s ease, opacity 0.25s ease,
-            border-color 0.3s ease;
-    }
-
-    .navbar-mobile.is-open {
-        max-height: 420px;
-
-        border-top: 1px solid var(--border);
-
-        opacity: 1;
-    }
-
-    .navbar-mobile a {
-        display: flex;
-        align-items: center;
-
-        gap: 18px;
-
-        padding: 18px 0;
-
-        border-bottom: 1px solid var(--border);
-
-        color: var(--muted);
-
-        font-size: 15px;
-
-        text-decoration: none;
-
-        transition: color 0.2s ease;
-    }
-
-    .navbar-mobile a:hover {
-        color: var(--text);
-    }
-
-    .navbar-mobile a span {
-        color: var(--accent);
-
-        font-family: monospace;
-        font-size: 10px;
+        top: 72px;
+        left: 0;
+        right: 0;
     }
 }
 
@@ -256,7 +277,8 @@
     .navbar-links a,
     .navbar-links a::after,
     .navbar-menu span,
-    .navbar-mobile {
+    .navbar-mobile,
+    .navbar-mobile a {
         transition: none;
     }
 }
