@@ -1,17 +1,23 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { projects } from "../data/projects";
 
 export default function Projects() {
     const [active, setActive] = useState(0);
     const [direction, setDirection] = useState("next");
 
+    const timelineRef = useRef(null);
+
     const touchStartX = useRef(null);
     const touchStartY = useRef(null);
     const swipeHandled = useRef(false);
 
     const project = projects[active];
+
+    /* =========================
+       SELECT PROJECT
+    ========================= */
 
     const selectProject = (index, swipeDirection = null) => {
         if (index < 0 || index >= projects.length || index === active) {
@@ -22,6 +28,43 @@ export default function Projects() {
 
         setActive(index);
     };
+
+    /* =========================
+       KEEP ACTIVE PROJECT VISIBLE
+    ========================= */
+
+    useEffect(() => {
+        const timeline = timelineRef.current;
+
+        if (!timeline) {
+            return;
+        }
+
+        const points = timeline.querySelectorAll(".project-point");
+        const point = points[active];
+
+        if (!point) {
+            return;
+        }
+
+        const timelineRect = timeline.getBoundingClientRect();
+        const pointRect = point.getBoundingClientRect();
+
+        const pointCenter = pointRect.left + pointRect.width / 2;
+        const timelineCenter = timelineRect.left + timelineRect.width / 2;
+
+        const target = timeline.scrollLeft + pointCenter - timelineCenter;
+
+        const maxScroll = Math.max(
+            0,
+            timeline.scrollWidth - timeline.clientWidth
+        );
+
+        timeline.scrollTo({
+            left: Math.max(0, Math.min(target, maxScroll)),
+            behavior: "smooth",
+        });
+    }, [active]);
 
     /* =========================
        SWIPE
@@ -53,16 +96,10 @@ export default function Projects() {
         const deltaX = currentX - touchStartX.current;
         const deltaY = currentY - touchStartY.current;
 
-        /*
-         * Ignore mostly vertical gestures.
-         */
         if (Math.abs(deltaY) > Math.abs(deltaX)) {
             return;
         }
 
-        /*
-         * Require a meaningful horizontal swipe.
-         */
         if (Math.abs(deltaX) < 50) {
             return;
         }
@@ -70,12 +107,10 @@ export default function Projects() {
         swipeHandled.current = true;
 
         if (deltaX < 0) {
-            // Swipe left -> next
             if (active < projects.length - 1) {
                 selectProject(active + 1, "next");
             }
         } else {
-            // Swipe right -> previous
             if (active > 0) {
                 selectProject(active - 1, "previous");
             }
@@ -89,57 +124,6 @@ export default function Projects() {
         touchStartX.current = null;
         touchStartY.current = null;
         swipeHandled.current = false;
-    };
-
-    /* =========================
-       MOUSE DRAG
-       ========================= */
-
-    const mouseStartX = useRef(null);
-    const mouseStartY = useRef(null);
-    const mouseDragging = useRef(false);
-
-    const handleMouseDown = (event) => {
-        mouseStartX.current = event.clientX;
-        mouseStartY.current = event.clientY;
-        mouseDragging.current = true;
-    };
-
-    const handleMouseUp = (event) => {
-        if (!mouseDragging.current || mouseStartX.current === null) {
-            return;
-        }
-
-        const deltaX = event.clientX - mouseStartX.current;
-        const deltaY = event.clientY - mouseStartY.current;
-
-        mouseDragging.current = false;
-        mouseStartX.current = null;
-        mouseStartY.current = null;
-
-        if (Math.abs(deltaY) > Math.abs(deltaX)) {
-            return;
-        }
-
-        if (Math.abs(deltaX) < 50) {
-            return;
-        }
-
-        if (deltaX < 0) {
-            if (active < projects.length - 1) {
-                selectProject(active + 1, "next");
-            }
-        } else {
-            if (active > 0) {
-                selectProject(active - 1, "previous");
-            }
-        }
-    };
-
-    const handleMouseLeave = () => {
-        mouseDragging.current = false;
-        mouseStartX.current = null;
-        mouseStartY.current = null;
     };
 
     return (
@@ -164,44 +148,42 @@ export default function Projects() {
                 ========================= */}
 
                 <div
+                    ref={timelineRef}
                     className="project-timeline"
-                    style={{
-                        "--project-count": projects.length,
-                    }}
                     onTouchStart={handleTouchStart}
                     onTouchMove={handleTouchMove}
                     onTouchEnd={handleTouchEnd}
-                    onMouseDown={handleMouseDown}
-                    onMouseUp={handleMouseUp}
-                    onMouseLeave={handleMouseLeave}
                 >
-                    <div className="project-track" aria-hidden="true" />
+                    <div className="project-timeline-inner">
+                        <div className="project-track" />
 
-                    <div className="project-timeline-points">
-                        {projects.map((item, index) => (
-                            <button
-                                key={`project-point-${index}`}
-                                className={`project-point ${
-                                    active === index ? "active" : ""
-                                }`}
-                                onClick={() => selectProject(index)}
-                                aria-label={`View ${item.name}`}
-                            >
-                                <span className="project-dot" />
+                        <div className="project-timeline-points">
+                            {projects.map((item, index) => (
+                                <button
+                                    type="button"
+                                    key={`project-point-${index}`}
+                                    className={`project-point ${
+                                        active === index ? "active" : ""
+                                    }`}
+                                    onClick={() => selectProject(index)}
+                                    aria-label={`View ${item.name}`}
+                                >
+                                    <span className="project-dot" />
 
-                                <span className="project-point-info">
-                                    <span className="project-point-short">
-                                        {item.title}
-                                    </span>
-
-                                    {active === index && (
-                                        <span className="project-point-date">
-                                            {item.period}
+                                    <span className="project-point-info">
+                                        <span className="project-point-short">
+                                            {item.title}
                                         </span>
-                                    )}
-                                </span>
-                            </button>
-                        ))}
+
+                                        {active === index && (
+                                            <span className="project-point-date">
+                                                {item.period}
+                                            </span>
+                                        )}
+                                    </span>
+                                </button>
+                            ))}
+                        </div>
                     </div>
                 </div>
 
@@ -256,13 +238,9 @@ export default function Projects() {
                         </div>
 
                         <div className="project-card-body">
-                            {/* Description */}
-
                             <p className="project-description">
                                 {project.description}
                             </p>
-
-                            {/* Tech */}
 
                             <div className="project-section">
                                 <p className="project-section-label">
@@ -278,8 +256,6 @@ export default function Projects() {
                                 </div>
                             </div>
 
-                            {/* Highlights */}
-
                             <div className="project-highlights">
                                 {project.highlights.map((highlight, index) => (
                                     <div
@@ -292,8 +268,6 @@ export default function Projects() {
                                     </div>
                                 ))}
                             </div>
-
-                            {/* What I Built */}
 
                             <div className="project-section project-work">
                                 <p className="project-section-label">
@@ -319,6 +293,7 @@ export default function Projects() {
 
                 <div className="project-nav">
                     <button
+                        type="button"
                         onClick={() => selectProject(active - 1, "previous")}
                         disabled={active === 0}
                         aria-label="Previous project"
@@ -333,6 +308,7 @@ export default function Projects() {
                     </span>
 
                     <button
+                        type="button"
                         onClick={() => selectProject(active + 1, "next")}
                         disabled={active === projects.length - 1}
                         aria-label="Next project"

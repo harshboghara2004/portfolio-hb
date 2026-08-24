@@ -11,55 +11,122 @@
 ========================= */
 
 .exp-timeline {
+    --exp-point-width: 270px;
+    --exp-side: 0px;
+
     position: relative;
 
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
 
-    margin-top: 65px;
+    margin-top: 75px;
 
-    padding: 0 70px 5px;
+    padding: 18px 0 14px;
+
+    overflow-x: auto;
+    overflow-y: visible;
+
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    scroll-behavior: smooth;
+
+    overscroll-behavior-x: contain;
+
+    touch-action: pan-x;
+
+    user-select: none;
+
+    cursor: grab;
+}
+
+.exp-timeline::-webkit-scrollbar {
+    display: none;
+}
+
+.exp-timeline:active {
+    cursor: grabbing;
+}
+
+/* =========================
+   SCROLLABLE CONTENT
+========================= */
+
+.exp-timeline-points {
+    position: relative;
+
+    display: flex;
+
+    align-items: flex-start;
+    justify-content: flex-start;
+
+    width: max-content;
+
+    min-width: 100%;
+
+    padding-left: var(--exp-side);
+    padding-right: var(--exp-side);
 
     overflow: visible;
 }
 
-/* Connecting line */
+/* =========================
+   TIMELINE LINE
+========================= */
+
+/*
+   Dot:
+   top = 18px
+   height = 16px
+   center = 26px
+
+   The track therefore sits at 26px.
+
+   Because the track is inside the scrollable
+   content, it moves together with the dots.
+*/
 
 .exp-track {
     position: absolute;
 
-    /*
-     * Align the rail exactly with the center
-     * of the first and last timeline dots.
-     */
-    left: calc(70px + (100% - 140px) / 4);
-    right: calc(70px + (100% - 140px) / 4);
+    top: 8px;
 
-    top: 7px;
+    left: calc(var(--exp-side) + (var(--exp-point-width) / 2));
 
-    height: 1px;
+    right: calc(var(--exp-side) + (var(--exp-point-width) / 2));
 
-    background: var(--border);
+    height: 2px;
 
     z-index: 1;
 
+    display: block;
+
+    background: #383838;
+
+    opacity: 1;
+
     pointer-events: none;
 }
-/* Timeline point */
+
+/* =========================
+   TIMELINE POINT
+========================= */
 
 .exp-point {
     position: relative;
+
     z-index: 3;
 
+    flex: 0 0 var(--exp-point-width);
+
+    width: var(--exp-point-width);
+    min-width: var(--exp-point-width);
+
     display: flex;
+
     flex-direction: column;
     align-items: center;
 
-    gap: 14px;
-
-    min-width: 0;
-
-    padding: 0 10px 5px;
+    padding: 0 10px 8px;
 
     border: 0;
 
@@ -70,13 +137,18 @@
     cursor: pointer;
 
     text-align: center;
+
+    -webkit-tap-highlight-color: transparent;
 }
 
-/* Dot */
+/* =========================
+   DOT
+========================= */
 
 .exp-dot {
     position: relative;
-    z-index: 4;
+
+    z-index: 5;
 
     display: block;
 
@@ -87,7 +159,8 @@
 
     box-sizing: border-box;
 
-    border: 1px solid var(--dim);
+    border: 2px solid #555;
+
     border-radius: 50%;
 
     background: var(--bg);
@@ -96,7 +169,9 @@
         background 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Active dot */
+/* =========================
+   ACTIVE DOT
+========================= */
 
 .exp-point.active .exp-dot {
     border-color: var(--accent);
@@ -113,31 +188,39 @@
     }
 
     50% {
-        box-shadow: 0 0 0 7px rgba(184, 255, 90, 0.08);
+        box-shadow: 0 0 0 8px rgba(184, 255, 90, 0.08);
     }
 }
 
 .exp-point:hover .exp-dot {
-    border-color: var(--accent);
-
     transform: scale(1.2);
+
+    border-color: var(--accent);
 }
 
-/* Timeline text */
+/* =========================
+   TIMELINE INFO
+========================= */
 
 .exp-point-info {
     display: flex;
+
     flex-direction: column;
     align-items: center;
 
-    gap: 5px;
+    gap: 6px;
+
+    min-height: 42px;
+
+    margin-top: 15px;
 }
 
 .exp-point-date {
     color: var(--dim);
 
     font-family: monospace;
-    font-size: 10px;
+
+    font-size: 11px;
 
     white-space: nowrap;
 
@@ -147,7 +230,8 @@
 .exp-point-company {
     color: var(--muted);
 
-    font-size: 13px;
+    font-size: 14px;
+
     font-weight: 500;
 
     white-space: nowrap;
@@ -162,12 +246,15 @@
 .exp-point.active .exp-point-company {
     color: var(--text);
 }
+
 /* =========================
    ACTIVE CARD
 ========================= */
 
 .exp-view {
     margin-top: 50px;
+
+    overflow: hidden;
 
     touch-action: pan-y;
 
@@ -189,45 +276,22 @@
 
     background: var(--surface);
 }
+
 /* =========================
-   EXPERIENCE SWIPE ANIMATION
+   EXPERIENCE SWIPE
 ========================= */
-
-.exp-view {
-    margin-top: 50px;
-
-    overflow: hidden;
-
-    touch-action: pan-y;
-}
-
-/* Normal card */
-
-.exp-card {
-    border: 1px solid var(--border);
-
-    background: var(--surface);
-}
-
-/* Leaving toward left */
 
 .exp-swiping-next .exp-card {
     animation: expSwipeOutLeft 180ms cubic-bezier(0.4, 0, 1, 1) forwards;
 }
 
-/* Leaving toward right */
-
 .exp-swiping-previous .exp-card {
     animation: expSwipeOutRight 180ms cubic-bezier(0.4, 0, 1, 1) forwards;
 }
 
-/* New card coming from right */
-
 .exp-swiped-in-next .exp-card {
     animation: expSwipeInRight 350ms cubic-bezier(0.16, 1, 0.3, 1);
 }
-
-/* New card coming from left */
 
 .exp-swiped-in-previous .exp-card {
     animation: expSwipeInLeft 350ms cubic-bezier(0.16, 1, 0.3, 1);
@@ -294,13 +358,15 @@
     left: 0;
 
     width: 0;
-    height: 1px;
+    height: 2px;
 
     z-index: 10;
 
     background: var(--accent);
 
     transition: width 0.4s ease;
+
+    pointer-events: none;
 }
 
 .exp-card:hover::before {
@@ -313,6 +379,7 @@
 
 .exp-card-head {
     display: flex;
+
     justify-content: space-between;
 
     gap: 40px;
@@ -328,6 +395,7 @@
     color: var(--accent);
 
     font-family: monospace;
+
     font-size: 10px;
 
     letter-spacing: 0.1em;
@@ -347,6 +415,7 @@
     color: var(--muted);
 
     font-family: monospace;
+
     font-size: 12px;
 }
 
@@ -366,10 +435,13 @@
     color: var(--accent);
 }
 
-/* Meta */
+/* =========================
+   META
+========================= */
 
 .exp-meta {
     display: flex;
+
     flex-direction: column;
     align-items: flex-end;
 
@@ -380,6 +452,7 @@
 
 .exp-location {
     display: flex;
+
     align-items: center;
 
     gap: 7px;
@@ -387,6 +460,7 @@
     color: var(--text);
 
     font-family: monospace;
+
     font-size: 11px;
 
     white-space: nowrap;
@@ -405,6 +479,7 @@
     color: var(--dim);
 
     font-family: monospace;
+
     font-size: 10px;
 }
 
@@ -418,6 +493,7 @@
 
 .exp-tech {
     display: flex;
+
     flex-wrap: wrap;
 
     gap: 6px;
@@ -429,11 +505,13 @@
     padding: 7px 10px;
 
     border: 1px solid #303030;
+
     border-radius: 2px;
 
     color: var(--text);
 
     font-family: monospace;
+
     font-size: 10px;
 
     transition: color 0.2s ease, border-color 0.2s ease;
@@ -457,10 +535,13 @@
     line-height: 1.65;
 }
 
-/* Points */
+/* =========================
+   POINTS
+========================= */
 
 .exp-points {
     display: flex;
+
     flex-direction: column;
 
     border-top: 1px solid var(--border);
@@ -468,6 +549,7 @@
 
 .exp-points > div {
     display: flex;
+
     align-items: flex-start;
 
     gap: 12px;
@@ -504,6 +586,7 @@
 
 .exp-nav {
     display: flex;
+
     align-items: center;
     justify-content: center;
 
@@ -517,10 +600,12 @@
     height: 32px;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
     border: 1px solid var(--border);
+
     border-radius: 2px;
 
     background: transparent;
@@ -532,27 +617,12 @@
     transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
 }
 
-.exp-nav button:hover {
+.exp-nav button:hover:not(:disabled) {
     color: var(--accent);
 
     border-color: #3a3a3a;
 
     background: var(--surface);
-}
-
-.exp-nav > span {
-    color: var(--dim);
-
-    font-family: monospace;
-    font-size: 10px;
-}
-
-.exp-nav > span i {
-    margin: 0 5px;
-
-    color: #333;
-
-    font-style: normal;
 }
 
 .exp-nav button:disabled {
@@ -569,12 +639,20 @@
     pointer-events: none;
 }
 
-.exp-nav button:disabled:hover {
+.exp-nav > span {
+    color: var(--dim);
+
+    font-family: monospace;
+
+    font-size: 10px;
+}
+
+.exp-nav > span i {
+    margin: 0 5px;
+
     color: #333;
 
-    border-color: #222;
-
-    background: transparent;
+    font-style: normal;
 }
 
 /* =========================
@@ -583,34 +661,64 @@
 
 @media (max-width: 700px) {
     .exp-timeline {
-        grid-template-columns: repeat(2, minmax(150px, 1fr));
+        --exp-point-width: 200px;
 
-        margin-top: 50px;
-        padding: 0 25px;
+        --exp-side: calc((100vw - 32px - var(--exp-point-width)) / 2);
+
+        margin-top: 55px;
+
+        padding: 18px 0 14px;
 
         overflow-x: auto;
-
-        scrollbar-width: none;
+        overflow-y: visible;
     }
 
-    .exp-timeline::-webkit-scrollbar {
-        display: none;
+    .exp-timeline-points {
+        width: max-content;
+
+        min-width: 100%;
+
+        padding-left: var(--exp-side);
+        padding-right: var(--exp-side);
     }
 
+    /*
+       The line begins at the center
+       of the first dot and ends at
+       the center of the last dot.
+    */
     .exp-track {
-        left: calc(25px + (100% - 50px) / 4);
+        top: 8px;
 
-        right: calc(25px + (100% - 50px) / 4);
+        left: calc(var(--exp-side) + (var(--exp-point-width) / 2));
 
-        top: 7px;
+        right: calc(var(--exp-side) + (var(--exp-point-width) / 2));
+
+        width: auto;
+
+        height: 2px;
+
+        background: #383838;
     }
 
     .exp-point {
-        min-width: 150px;
+        flex: 0 0 var(--exp-point-width);
+
+        width: var(--exp-point-width);
+
+        min-width: var(--exp-point-width);
+    }
+
+    .exp-point-info {
+        margin-top: 15px;
+    }
+
+    .exp-point-company {
+        font-size: 13px;
     }
 
     .exp-view {
-        margin-top: 40px;
+        margin-top: 45px;
     }
 
     .exp-card-head {
@@ -639,5 +747,42 @@
 
     .exp-points p {
         font-size: 13px;
+    }
+}
+
+/* =========================
+   SMALL MOBILE
+========================= */
+
+@media (max-width: 450px) {
+    .exp-timeline {
+        --exp-point-width: 185px;
+
+        --exp-side: calc((100vw - 32px - var(--exp-point-width)) / 2);
+
+        margin-top: 50px;
+    }
+
+    .exp-point-date {
+        font-size: 10px;
+    }
+
+    .exp-point-company {
+        font-size: 12px;
+    }
+}
+
+/* =========================
+   REDUCED MOTION
+========================= */
+
+@media (prefers-reduced-motion: reduce) {
+    .exp-timeline {
+        scroll-behavior: auto;
+    }
+
+    .exp-point.active .exp-dot,
+    .exp-card {
+        animation: none;
     }
 }

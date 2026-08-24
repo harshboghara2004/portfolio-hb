@@ -11,41 +11,58 @@
 ========================= */
 
 .project-timeline {
+    --project-width: 180px;
+    --timeline-side: max(30px, calc((100% - var(--project-width)) / 2));
+
     position: relative;
 
-    margin-top: 65px;
+    width: min(100%, 560px);
+    margin: 65px auto 0;
 
-    /*
-     * Extra top padding prevents the active
-     * circle from ever being clipped.
-     */
-    padding: 9px 30px 12px;
+    padding: 12px 0 14px;
 
-    overflow: visible;
+    overflow-x: auto;
+    overflow-y: hidden;
 
-    touch-action: pan-y;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    scroll-behavior: smooth;
+    overscroll-behavior-x: contain;
+
+    touch-action: pan-x;
 
     user-select: none;
 
     cursor: grab;
 }
 
+.project-timeline::-webkit-scrollbar {
+    display: none;
+}
+
 .project-timeline:active {
     cursor: grabbing;
 }
 
+/* =========================
+   SCROLLABLE TIMELINE CONTENT
+========================= */
+
 .project-timeline-points {
     position: relative;
 
-    z-index: 5;
+    z-index: 1;
 
     display: flex;
-
     align-items: flex-start;
+    justify-content: flex-start;
 
-    justify-content: space-between;
+    width: max-content;
+    min-width: 100%;
 
-    width: 100%;
+    padding-left: var(--timeline-side);
+    padding-right: var(--timeline-side);
 
     overflow: visible;
 }
@@ -54,26 +71,37 @@
    TIMELINE RAIL
 ========================= */
 
-.project-track {
+/*
+ * The rail lives inside the scrollable points container.
+ * Therefore the rail moves together with the dots when
+ * the user swipes horizontally.
+ */
+.project-timeline-points::before {
+    content: "";
+
     position: absolute;
 
-    /*
-     * Start/end at the center of the
-     * first and last dots.
-     */
-    left: calc(30px + (100% - 60px) / (var(--project-count) * 2));
+    top: 7px;
 
-    right: calc(30px + (100% - 60px) / (var(--project-count) * 2));
+    left: calc(var(--timeline-side) + var(--project-width) / 2);
+    right: calc(var(--timeline-side) + var(--project-width) / 2);
 
-    top: 16px;
+    height: 2px;
 
-    height: 1px;
+    z-index: 2;
 
-    z-index: 1;
+    display: block;
 
-    background: var(--border);
+    background: #3a3a3a;
+
+    opacity: 1;
 
     pointer-events: none;
+}
+
+/* Keep the old track harmless if it is still rendered by JS. */
+.project-track {
+    display: none;
 }
 
 /* =========================
@@ -83,28 +111,24 @@
 .project-point {
     position: relative;
 
-    z-index: 5;
+    z-index: 3;
 
-    flex: 1 0 0;
+    flex: 0 0 var(--project-width);
+
+    width: var(--project-width);
+    min-width: var(--project-width);
 
     display: flex;
-
     flex-direction: column;
-
     align-items: center;
-
-    min-width: 150px;
 
     padding: 0 10px;
 
     border: 0;
-
     background: transparent;
-
     color: inherit;
 
     cursor: pointer;
-
     text-align: center;
 
     -webkit-tap-highlight-color: transparent;
@@ -117,7 +141,7 @@
 .project-dot {
     position: relative;
 
-    z-index: 10;
+    z-index: 5;
 
     display: block;
 
@@ -128,8 +152,7 @@
 
     box-sizing: border-box;
 
-    border: 1px solid #555;
-
+    border: 2px solid #555;
     border-radius: 50%;
 
     background: var(--bg);
@@ -140,7 +163,6 @@
 
 .project-point.active .project-dot {
     border-color: var(--accent);
-
     background: var(--accent);
 
     animation: projectPulse 2s ease-in-out infinite;
@@ -159,7 +181,6 @@
 
 .project-point:hover .project-dot {
     transform: scale(1.2);
-
     border-color: var(--accent);
 }
 
@@ -169,9 +190,7 @@
 
 .project-point-info {
     display: flex;
-
     flex-direction: column;
-
     align-items: center;
 
     gap: 5px;
@@ -185,9 +204,7 @@
     color: var(--muted);
 
     font-family: monospace;
-
     font-size: 11px;
-
     font-weight: 500;
 
     letter-spacing: 0.03em;
@@ -201,7 +218,6 @@
     color: var(--accent);
 
     font-family: monospace;
-
     font-size: 10px;
 
     white-space: nowrap;
@@ -216,13 +232,11 @@
 @keyframes projectDateIn {
     from {
         opacity: 0;
-
         transform: translateY(-4px);
     }
 
     to {
         opacity: 1;
-
         transform: translateY(0);
     }
 }
@@ -233,7 +247,6 @@
 
 .project-view {
     margin-top: 45px;
-
     overflow: hidden;
 }
 
@@ -241,15 +254,12 @@
     position: relative;
 
     border: 1px solid var(--border);
-
     background: var(--surface);
 
     overflow: hidden;
 
     animation-duration: 0.4s;
-
     animation-timing-function: ease;
-
     animation-fill-mode: both;
 }
 
@@ -268,13 +278,11 @@
 @keyframes projectCardNext {
     from {
         opacity: 0;
-
         transform: translateX(28px) translateY(4px);
     }
 
     to {
         opacity: 1;
-
         transform: translateX(0) translateY(0);
     }
 }
@@ -282,13 +290,11 @@
 @keyframes projectCardPrevious {
     from {
         opacity: 0;
-
         transform: translateX(-28px) translateY(4px);
     }
 
     to {
         opacity: 1;
-
         transform: translateX(0) translateY(0);
     }
 }
@@ -306,7 +312,6 @@
     left: 0;
 
     width: 0;
-
     height: 2px;
 
     z-index: 20;
@@ -328,7 +333,6 @@
 
 .project-card-head {
     display: flex;
-
     justify-content: space-between;
 
     gap: 40px;
@@ -348,7 +352,6 @@
     color: var(--accent);
 
     font-family: monospace;
-
     font-size: 10px;
 
     letter-spacing: 0.1em;
@@ -356,7 +359,6 @@
 
 .project-card h3 {
     font-size: 36px;
-
     line-height: 1;
 
     letter-spacing: -0.05em;
@@ -368,7 +370,6 @@
 
 .project-meta {
     display: flex;
-
     align-items: flex-start;
 
     padding-top: 4px;
@@ -376,7 +377,6 @@
 
 .project-links {
     display: flex;
-
     align-items: center;
 
     gap: 18px;
@@ -384,17 +384,14 @@
 
 .project-link {
     display: inline-flex;
-
     align-items: center;
 
     color: var(--text);
 
     font-family: monospace;
-
     font-size: 10px;
 
     letter-spacing: 0.04em;
-
     text-decoration: none;
 
     transition: color 0.2s ease, opacity 0.2s ease;
@@ -406,9 +403,7 @@
 
 .project-link-disabled {
     color: var(--dim);
-
     opacity: 0.65;
-
     cursor: default;
 }
 
@@ -432,7 +427,6 @@
     color: var(--text);
 
     font-size: 16px;
-
     line-height: 1.6;
 }
 
@@ -450,7 +444,6 @@
     color: var(--accent);
 
     font-family: monospace;
-
     font-size: 9px;
 
     letter-spacing: 0.12em;
@@ -462,7 +455,6 @@
 
 .project-tech {
     display: flex;
-
     flex-wrap: wrap;
 
     gap: 6px;
@@ -472,13 +464,11 @@
     padding: 6px 9px;
 
     border: 1px solid #303030;
-
     border-radius: 2px;
 
     color: var(--text);
 
     font-family: monospace;
-
     font-size: 10px;
 
     transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
@@ -486,9 +476,7 @@
 
 .project-tech span:hover {
     color: var(--accent);
-
     border-color: #454545;
-
     background: #151515;
 }
 
@@ -498,13 +486,11 @@
 
 .project-highlights {
     display: grid;
-
     grid-template-columns: repeat(2, minmax(0, 1fr));
 
     margin-top: 22px;
 
     border-top: 1px solid var(--border);
-
     border-left: 1px solid var(--border);
 }
 
@@ -512,7 +498,6 @@
     min-height: 0;
 
     display: flex;
-
     align-items: baseline;
 
     gap: 18px;
@@ -520,7 +505,6 @@
     padding: 13px 16px;
 
     border-right: 1px solid var(--border);
-
     border-bottom: 1px solid var(--border);
 }
 
@@ -532,7 +516,6 @@
     color: var(--dim);
 
     font-family: monospace;
-
     font-size: 8px;
 
     letter-spacing: 0.09em;
@@ -542,7 +525,6 @@
     color: var(--text);
 
     font-size: 13px;
-
     line-height: 1.4;
 }
 
@@ -556,7 +538,6 @@
 
 .project-points {
     display: flex;
-
     flex-direction: column;
 
     border-top: 1px solid var(--border);
@@ -564,7 +545,6 @@
 
 .project-points > div {
     display: flex;
-
     align-items: flex-start;
 
     gap: 11px;
@@ -591,7 +571,6 @@
     color: var(--muted);
 
     font-size: 13px;
-
     line-height: 1.5;
 }
 
@@ -601,9 +580,7 @@
 
 .project-nav {
     display: flex;
-
     align-items: center;
-
     justify-content: center;
 
     gap: 18px;
@@ -616,15 +593,11 @@
     height: 32px;
 
     display: flex;
-
     align-items: center;
-
     justify-content: center;
 
     border: 1px solid var(--border);
-
     background: transparent;
-
     color: var(--muted);
 
     cursor: pointer;
@@ -635,19 +608,14 @@
 
 .project-nav button:hover:not(:disabled) {
     color: var(--accent);
-
     border-color: #444;
-
     background: var(--surface);
 }
 
 .project-nav button:disabled {
     color: #333;
-
     border-color: #222;
-
     opacity: 0.45;
-
     cursor: not-allowed;
 }
 
@@ -655,7 +623,6 @@
     color: var(--dim);
 
     font-family: monospace;
-
     font-size: 10px;
 }
 
@@ -663,7 +630,6 @@
     margin: 0 5px;
 
     color: #333;
-
     font-style: normal;
 }
 
@@ -673,41 +639,42 @@
 
 @media (max-width: 700px) {
     .project-timeline {
-        margin-top: 50px;
+        --project-width: 150px;
+        --timeline-side: calc((100vw - 32px - var(--project-width)) / 2);
 
-        padding: 9px 0 12px;
+        width: 100%;
+        margin: 50px auto 0;
+
+        padding: 12px 0 14px;
 
         overflow-x: auto;
-
-        overflow-y: visible;
-
-        scrollbar-width: none;
-    }
-
-    .project-timeline::-webkit-scrollbar {
-        display: none;
+        overflow-y: hidden;
     }
 
     .project-timeline-points {
-        justify-content: flex-start;
-
         width: max-content;
-
         min-width: 100%;
+
+        padding-left: var(--timeline-side);
+        padding-right: var(--timeline-side);
+    }
+
+    .project-timeline-points::before {
+        top: 7px;
+
+        left: calc(var(--timeline-side) + var(--project-width) / 2);
+        right: calc(var(--timeline-side) + var(--project-width) / 2);
+
+        height: 2px;
+
+        background: #3a3a3a;
     }
 
     .project-point {
-        flex: 0 0 150px;
+        flex: 0 0 var(--project-width);
 
-        min-width: 150px;
-    }
-
-    .project-track {
-        left: 75px;
-
-        right: auto;
-
-        width: calc(150px * (var(--project-count) - 1));
+        width: var(--project-width);
+        min-width: var(--project-width);
     }
 
     .project-view {
@@ -734,7 +701,6 @@
 
     .project-links {
         justify-content: flex-start;
-
         flex-wrap: wrap;
     }
 
@@ -752,7 +718,6 @@
 
     .project-highlight {
         gap: 12px;
-
         padding: 11px 13px;
     }
 
@@ -762,5 +727,21 @@
 
     .project-points p {
         font-size: 13px;
+    }
+}
+
+/* =========================
+   REDUCED MOTION
+========================= */
+
+@media (prefers-reduced-motion: reduce) {
+    .project-timeline {
+        scroll-behavior: auto;
+    }
+
+    .project-point.active .project-dot,
+    .project-point-date,
+    .project-card {
+        animation: none;
     }
 }

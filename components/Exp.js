@@ -8,13 +8,49 @@ export default function Exp() {
     const [direction, setDirection] = useState("next");
     const [isAnimating, setIsAnimating] = useState(false);
 
-    const touchStartX = useRef(0);
-    const touchCurrentX = useRef(0);
+    const timelineRef = useRef(null);
+
+    const timelineStartX = useRef(0);
+    const timelineCurrentX = useRef(0);
+
+    const cardStartX = useRef(0);
+    const cardCurrentX = useRef(0);
 
     const item = experience[active];
 
+    /* =========================
+       CENTER ACTIVE TIMELINE ITEM
+    ========================= */
+
+    const scrollActivePoint = (index) => {
+        const timeline = timelineRef.current;
+
+        if (!timeline) return;
+
+        const point = timeline.querySelector(`[data-exp-index="${index}"]`);
+
+        if (!point) return;
+
+        point.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest",
+            inline: "center",
+        });
+    };
+
+    /* =========================
+       CHANGE EXPERIENCE
+    ========================= */
+
     const changeExperience = (nextIndex, swipeDirection) => {
-        if (isAnimating || nextIndex === active) return;
+        if (
+            isAnimating ||
+            nextIndex === active ||
+            nextIndex < 0 ||
+            nextIndex >= experience.length
+        ) {
+            return;
+        }
 
         setDirection(swipeDirection);
         setIsAnimating(true);
@@ -24,9 +60,15 @@ export default function Exp() {
 
             requestAnimationFrame(() => {
                 setIsAnimating(false);
+
+                scrollActivePoint(nextIndex);
             });
         }, 180);
     };
+
+    /* =========================
+       SELECT EXPERIENCE
+    ========================= */
 
     const selectExperience = (index) => {
         if (index === active || isAnimating) return;
@@ -34,11 +76,19 @@ export default function Exp() {
         changeExperience(index, index > active ? "next" : "previous");
     };
 
+    /* =========================
+       NEXT
+    ========================= */
+
     const nextExperience = () => {
         if (active >= experience.length - 1) return;
 
         changeExperience(active + 1, "next");
     };
+
+    /* =========================
+       PREVIOUS
+    ========================= */
 
     const previousExperience = () => {
         if (active <= 0) return;
@@ -46,17 +96,50 @@ export default function Exp() {
         changeExperience(active - 1, "previous");
     };
 
-    const handleTouchStart = (event) => {
-        touchStartX.current = event.touches[0].clientX;
-        touchCurrentX.current = event.touches[0].clientX;
+    /* =========================
+       TIMELINE TOUCH
+    ========================= */
+
+    const handleTimelineTouchStart = (event) => {
+        timelineStartX.current = event.touches[0].clientX;
+
+        timelineCurrentX.current = event.touches[0].clientX;
     };
 
-    const handleTouchMove = (event) => {
-        touchCurrentX.current = event.touches[0].clientX;
+    const handleTimelineTouchMove = (event) => {
+        timelineCurrentX.current = event.touches[0].clientX;
     };
 
-    const handleTouchEnd = () => {
-        const distance = touchCurrentX.current - touchStartX.current;
+    const handleTimelineTouchEnd = () => {
+        const distance = timelineCurrentX.current - timelineStartX.current;
+
+        const threshold = 60;
+
+        if (Math.abs(distance) < threshold) return;
+
+        if (distance < 0) {
+            nextExperience();
+        } else {
+            previousExperience();
+        }
+    };
+
+    /* =========================
+       CARD TOUCH
+    ========================= */
+
+    const handleCardTouchStart = (event) => {
+        cardStartX.current = event.touches[0].clientX;
+
+        cardCurrentX.current = event.touches[0].clientX;
+    };
+
+    const handleCardTouchMove = (event) => {
+        cardCurrentX.current = event.touches[0].clientX;
+    };
+
+    const handleCardTouchEnd = () => {
+        const distance = cardCurrentX.current - cardStartX.current;
 
         const threshold = 60;
 
@@ -72,6 +155,10 @@ export default function Exp() {
     return (
         <section className="experience section" id="experience">
             <div className="wrap">
+                {/* =========================
+                    SECTION HEADER
+                ========================= */}
+
                 <div className="section-head">
                     <p className="section-number">02</p>
 
@@ -86,37 +173,58 @@ export default function Exp() {
                     </div>
                 </div>
 
+                {/* =========================
+                    TIMELINE
+                ========================= */}
+
                 <div
+                    ref={timelineRef}
                     className="exp-timeline"
                     style={{
                         "--experience-count": experience.length,
                     }}
+                    onTouchStart={handleTimelineTouchStart}
+                    onTouchMove={handleTimelineTouchMove}
+                    onTouchEnd={handleTimelineTouchEnd}
                 >
-                    <div className="exp-track" />
+                    <div className="exp-timeline-points">
+                        {/* REAL TRACK */}
 
-                    {experience.map((company, index) => (
-                        <button
-                            className={`exp-point ${
-                                active === index ? "active" : ""
-                            }`}
-                            key={company.company}
-                            onClick={() => selectExperience(index)}
-                            aria-label={`View ${company.company} experience`}
-                        >
-                            <span className="exp-dot" />
+                        <div className="exp-track" aria-hidden="true" />
 
-                            <span className="exp-point-info">
-                                <span className="exp-point-date">
-                                    {company.period}
+                        {experience.map((company, index) => (
+                            <button
+                                type="button"
+                                className={`exp-point ${
+                                    active === index ? "active" : ""
+                                }`}
+                                key={company.company}
+                                data-exp-index={index}
+                                onClick={() => selectExperience(index)}
+                                aria-label={`View ${company.company} experience`}
+                                aria-current={
+                                    active === index ? "true" : undefined
+                                }
+                            >
+                                <span className="exp-dot" />
+
+                                <span className="exp-point-info">
+                                    <span className="exp-point-date">
+                                        {company.period}
+                                    </span>
+
+                                    <span className="exp-point-company">
+                                        {company.company}
+                                    </span>
                                 </span>
-
-                                <span className="exp-point-company">
-                                    {company.company}
-                                </span>
-                            </span>
-                        </button>
-                    ))}
+                            </button>
+                        ))}
+                    </div>
                 </div>
+
+                {/* =========================
+                    ACTIVE EXPERIENCE CARD
+                ========================= */}
 
                 <div
                     className={`exp-view ${
@@ -124,11 +232,13 @@ export default function Exp() {
                             ? `exp-swiping-${direction}`
                             : `exp-swiped-in-${direction}`
                     }`}
-                    onTouchStart={handleTouchStart}
-                    onTouchMove={handleTouchMove}
-                    onTouchEnd={handleTouchEnd}
+                    onTouchStart={handleCardTouchStart}
+                    onTouchMove={handleCardTouchMove}
+                    onTouchEnd={handleCardTouchEnd}
                 >
                     <article className="exp-card">
+                        {/* CARD HEADER */}
+
                         <div className="exp-card-head">
                             <div>
                                 <p className="exp-type">{item.type}</p>
@@ -144,6 +254,9 @@ export default function Exp() {
                                             target="_blank"
                                             rel="noreferrer"
                                             aria-label={`Visit ${item.company}`}
+                                            onTouchStart={(event) =>
+                                                event.stopPropagation()
+                                            }
                                         >
                                             ↗
                                         </a>
@@ -159,6 +272,8 @@ export default function Exp() {
                             </div>
                         </div>
 
+                        {/* CARD BODY */}
+
                         <div className="exp-card-body">
                             <div className="exp-tech">
                                 {item.tech.map((tech) => (
@@ -172,6 +287,7 @@ export default function Exp() {
                                 {item.points.map((point) => (
                                     <div key={point}>
                                         <span className="exp-bullet" />
+
                                         <p>{point}</p>
                                     </div>
                                 ))}
@@ -180,8 +296,13 @@ export default function Exp() {
                     </article>
                 </div>
 
+                {/* =========================
+                    NAVIGATION
+                ========================= */}
+
                 <div className="exp-nav">
                     <button
+                        type="button"
                         onClick={previousExperience}
                         disabled={active === 0 || isAnimating}
                         aria-label="Previous experience"
@@ -191,11 +312,14 @@ export default function Exp() {
 
                     <span>
                         {String(active + 1).padStart(2, "0")}
+
                         <i>/</i>
+
                         {String(experience.length).padStart(2, "0")}
                     </span>
 
                     <button
+                        type="button"
                         onClick={nextExperience}
                         disabled={
                             active === experience.length - 1 || isAnimating
